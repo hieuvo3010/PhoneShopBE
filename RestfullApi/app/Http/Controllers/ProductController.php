@@ -26,7 +26,8 @@ class ProductController extends Controller
     public function index()
     {
         //
-        return ProductResource::collection(Product::paginate(5));
+        $products = Product::orderBy('id','DESC')->paginate(5);
+        return CategoryResource::collection($products);
     }
 
     /**
@@ -52,16 +53,11 @@ class ProductController extends Controller
             'name' => 'required|max:255|unique:products',
             'desc' => 'required',
             'content' => 'required|max:255',
-            'image' => 'required',
+            'image' => 'required|image',
             'id_brand' => 'required',
             'id_category' => 'required',
             'price' => 'required',
             'status' => 'required'
-        ],['name.required'=> 'Yêu cầu tên sản phẩm',
-            'desc.required'=> 'Yêu cầu mô tả',
-            'content.required'=> 'Yêu cầu nội dung',
-            'image.required'=> 'Yêu cầu hình ảnh',
-            'price.required'=> 'Yêu cầu giá sản phẩm',
         ]);
 
         $image = $data['image'];

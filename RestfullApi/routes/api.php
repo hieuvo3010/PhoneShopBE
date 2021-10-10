@@ -16,6 +16,7 @@ use Illuminate\Http\Request;
 Route::apiResource('post', 'Api\PostController');
 Route::apiResource('category', 'CategoryController');
 Route::apiResource('product', 'ProductController');
+Route::apiResource('brand', 'BrandController');
 
 Route::group([
     'middleware' => 'api',

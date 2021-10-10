@@ -4,9 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Brand;
 use Illuminate\Http\Request;
+use App\Http\Resources\BrandResource;
 
 class BrandController extends Controller
 {
+    public function __construct() 
+    {
+        //
+        $this->middleware('auth:api', ['except' => ['index', 'show']]);
+    }
     /**
      * Display a listing of the resource.
      *
@@ -15,6 +21,8 @@ class BrandController extends Controller
     public function index()
     {
         //
+        $bands = Brand::orderBy('id','DESC')->paginate(5);
+        return BrandResource::collection($bands);
     }
 
     /**
@@ -36,6 +44,17 @@ class BrandController extends Controller
     public function store(Request $request)
     {
         //
+        $bands = new Brand();
+        $bands->fill($request->validate([
+            'name' => 'required|max:255|unique:categories',
+            'desc' => 'required',
+            'status' => 'required',
+        ]));
+        $bands->save();
+
+        return response([
+            'data' => new BrandResource($bands)
+        ], 201);
     }
 
     /**
@@ -47,6 +66,7 @@ class BrandController extends Controller
     public function show(Brand $brand)
     {
         //
+        return new BrandResource($category);
     }
 
     /**
@@ -70,6 +90,10 @@ class BrandController extends Controller
     public function update(Request $request, Brand $brand)
     {
         //
+        $brand->update($request->all());
+        return response([
+            'data' => new BrandResource($brand)
+        ], 201);
     }
 
     /**
@@ -81,5 +105,6 @@ class BrandController extends Controller
     public function destroy(Brand $brand)
     {
         //
+        return $brand->delete();
     }
 }
