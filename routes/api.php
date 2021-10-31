@@ -39,6 +39,8 @@ Route::group([
         Route::post('/change-pass',  'Api\UserController@changePassWord');    
         Route::get('email/verify/{id}', 'Api\VerificationController@verify_user')->name('verification.verify'); // Make sure to keep this as your route name
         Route::get('email/resend', 'Api\VerificationController@resend')->name('verification.resend'); 
+        Route::post('/confirm-order', 'CheckoutController@confirm_order');
+        
     });
 
     Route::group(['prefix' => 'admin','middleware' => ['assign.guard:admins']],function ()
@@ -49,7 +51,7 @@ Route::group([
         Route::post('/refresh', 'Api\AdminController@refresh');
         Route::get('/user-profile', 'Api\AdminController@userProfile');
         Route::post('/change-pass',  'Api\AdminController@changePassWord');    
-        Route::get('email/verify/{id}', 'Api\VerificationController@verify_admin')->name('verification.verify'); // Make sure to keep this as your route name
+        Route::get('email/verify/{id}', 'Api\VerificationController@verify_admin')->name('verification.verify_admin'); // Make sure to keep this as your route name
         Route::get('email/resend', 'Api\VerificationController@resend')->name('verification.resend'); 
     });
     
