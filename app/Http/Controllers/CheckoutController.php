@@ -16,7 +16,7 @@ class CheckoutController extends Controller
     public function confirm_order(Request $request)
     {
         if(auth('users')->check()){
-            $data = $request->all();
+            $data =  $request->json()->all();
             $ship = new Ship();
             $ship->name = $data['name'];
             $ship->address = $data['address'];
@@ -40,24 +40,28 @@ class CheckoutController extends Controller
             $order_id = $order->id;
 
             // insert order_Detail
-            $order_details = new Order_detail();
-            $order_details->order_code = $order->order_code;
-            $order_details->id_order = $order_id;
-            $order_details->id_product = $data['product_id'];
-            $order_details->product_name = $data['product_name'];
-            $order_details->product_price = $data['product_price'];
-            $order_details->product_quantity = $data['product_qty'];
-            $order_details->product_coupon = $data['order_coupon'];
-            $order_details->product_fee = $data['order_fee'];
-            $order_details->save();
-    
-        
+            if($data['cart']){
+                foreach($data['cart'] as $key => $cart){
+                    $order_details = new Order_detail();
+                    $order_details->order_code = $order->order_code;
+                    $order_details->id_order = $order_id;
+                    $order_details->id_product = $cart['product_id'];
+                    $order_details->product_name = $cart['product_name'];
+                    $order_details->product_price = $cart['product_price'];
+                    $order_details->product_quantity = $cart['product_qty'];
+                    $order_details->product_coupon = $cart['order_coupon'];
+                    $order_details->product_fee = $cart['order_fee'];
+                    $order_details->save();
+                }
+            }
+            
+            $product_details = Order_detail::where('id_order',$order->id)->get();
             return response([
                 'message' => 'Success',
                 'ship' => new ShipResource($ship),
                 'order' => new OrderResource($order),
-                'order_detail' => new OrderDetailResource($order_details),
-
+                'order_detail' => 
+                   OrderDetailResource::collection($product_details),
             ], 201);
         
         }else{
