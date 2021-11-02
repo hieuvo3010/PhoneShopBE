@@ -26,7 +26,8 @@ class ProductController extends Controller
     public function index()
     {
         //
-        $products = Product::orderBy('id','DESC')->paginate(5);
+        //$products = Product::orderBy('id','DESC')->paginate(5);
+        $products = Product::paginate(10);
         return ProductResource::collection($products);
     }
 
@@ -49,36 +50,23 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         //
-        $data =  $request->validate([
-            'name' => 'required|max:255|unique:products',
-            'desc' => 'required',
-            'content' => 'required|max:255',
-            'image' => 'required|image',
-            'id_brand' => 'required',
-            'id_category' => 'required',
-            'price' => 'required',
-            'status' => 'required'
-        ]);
-
-        $image = $data['image'];
-        $extension =  $image->getClientOriginalExtension();
-        $name = time(). '_'.$image->getClientOriginalName();
-        Storage::disk('uploads')->put($name,File::get($image));
-
+   
+        
         $product = new Product();
-
-        $product->image = $name;
-        $product->name = $data['name'];
-        $product->desc = $data['desc'];
-        $product->content = $data['content'];
-        $product->id_brand = $data['id_brand'];
-        $product->id_category = $data['id_category'];
-        $product->status = $data['status'];
-        $product->price = $data['price'];
+        $product->fill($request->validate([
+            'name' => 'required|max:255|unique:products',
+            'desc' => 'required|max:255',
+            'image' => 'required',
+            'images_product' => 'nullable',
+            'id_brand' => 'required',
+            'discount' => 'required',
+            'quantity' => 'required',
+            'price' => 'required',
+            'slug' => 'required|unique:products'
+        ]));
         $product->save();
-
         return response([
-            'data' => new ProductResource($product)
+            'data' => (new ProductResource($product))
         ], 201);
     }
 
@@ -88,31 +76,14 @@ class ProductController extends Controller
      * @param  \App\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function show(Product $product)
+    public function show($id)
     {
         //
         //return $product;
+        $product = Product::find($id)->with('brand')->get();
         return new ProductResource($product); //show trong mục chỉ định ProductResource
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Product  $product
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Product $product)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Product  $product
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, Product $product)
     {
         //

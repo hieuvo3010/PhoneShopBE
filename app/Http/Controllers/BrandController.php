@@ -21,7 +21,7 @@ class BrandController extends Controller
     public function index()
     {
         //
-        $bands = Brand::orderBy('id','DESC')->paginate(5);
+        $bands = Brand::paginate(10);
         return BrandResource::collection($bands);
     }
 
@@ -46,9 +46,9 @@ class BrandController extends Controller
         //
         $bands = new Brand();
         $bands->fill($request->validate([
-            'name' => 'required|max:255|unique:categories',
+            'name' => 'required|max:255|unique:brands',
             'desc' => 'required',
-            'status' => 'required',
+            'slug'  => 'required|unique:brands',
         ]));
         $bands->save();
 

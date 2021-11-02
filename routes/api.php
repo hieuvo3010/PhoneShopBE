@@ -13,10 +13,10 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::apiResource('post', 'Api\PostController');
-Route::apiResource('category', 'CategoryController');
-Route::apiResource('product', 'ProductController');
-Route::apiResource('brand', 'BrandController');
+// Route::apiResource('post', 'Api\PostController');
+// Route::apiResource('category', 'CategoryController');
+// Route::apiResource('product', 'ProductController');
+// Route::apiResource('brand', 'BrandController');
 
 Route::group([
     'middleware' => 'api',
@@ -24,11 +24,13 @@ Route::group([
 
 ], function ($router) {
     
-    Route::apiResource('category', 'CategoryController');
+   
     Route::apiResource('product', 'ProductController');
     Route::apiResource('brand', 'BrandController');
-
-
+    Route::get('home/brands/{id}', 'HomeController@show_product_with_brand');
+    Route::get('home/product/new', 'HomeController@show_product_new');
+    Route::get('home/product/{sort}', 'HomeController@show_product');
+    
     Route::group(['prefix' => 'user','middleware' => ['assign.guard:users']],function ()
     {
         Route::post('/login', 'Api\UserController@login');

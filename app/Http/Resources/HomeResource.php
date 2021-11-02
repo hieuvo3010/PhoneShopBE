@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Resources\Product;
+namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ProductResource extends JsonResource
+class HomeResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -14,6 +14,6 @@ class ProductResource extends JsonResource
      */
     public function toArray($request)
     {
-         return parent::toArray($request);
+        return parent::toArray($request);
     }
 }

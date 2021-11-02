@@ -18,6 +18,6 @@ class Order extends Model
         return $this->belongsTo('App\Ship', 'id_ship');
     }
     public function order_detail(){
-        return $this->hasMany('App\Order_detail');
+        return $this->hasMany('App\Order_detail','id');
     }
 }

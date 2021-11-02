@@ -28,6 +28,7 @@ class AdminController extends Controller
     	$validator = Validator::make($request->all(), [
             'email' => 'required|email',
             'password' => 'required|string|min:6',
+
         ]);
 
         if ($validator->fails()) {
@@ -54,7 +55,7 @@ class AdminController extends Controller
     public function register(Request $request) {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|between:2,100',
-            'email' => 'required|string|email|max:100|unique:admins',
+            'email' => 'required|string|email|max:100|unique:admins|unique:users',
             'password' => 'required|string|confirmed|min:6',
         ]);
 
@@ -64,12 +65,12 @@ class AdminController extends Controller
         $admins = Admin::create(array_merge(
                     $validator->validated(),
                     ['password' => bcrypt($request->password)]
-                ))->sendEmailVerificationNotification();
+        ));//->sendEmailVerificationNotification();
                 //->sendEmailVerificationNotification()
         
         return response()->json([
             'message' => 'Admin successfully registered',
-            'Admin' => 'Phai very truoc moi co'
+            'Admin' => $admins
         ], 201);
     }
 

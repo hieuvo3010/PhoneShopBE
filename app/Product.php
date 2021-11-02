@@ -7,10 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 class Product extends Model
 {
     //
+
     protected $fillable = [
-        'name','desc','content','image','id_category','status','id_brand','price'
+        'name','desc','discount','image','status','id_brand','price','slug','images_product','quantity'
     ];
 
+    protected $casts  = [ 'images_product' => 'array' ];
     public function category(){
         return $this->belongsTo('App\Category', 'id_category');
     }
@@ -18,4 +20,6 @@ class Product extends Model
     public function brand(){
         return $this->belongsTo('App\Brand','id_brand');
     }
+
+   
 }

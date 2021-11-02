@@ -46,6 +46,7 @@ class CheckoutController extends Controller
                     $order_details->order_code = $order->order_code;
                     $order_details->id_order = $order_id;
                     $order_details->id_product = $cart['product_id'];
+                    $order_details->product_image = $cart['product_image'];
                     $order_details->product_name = $cart['product_name'];
                     $order_details->product_price = $cart['product_price'];
                     $order_details->product_quantity = $cart['product_qty'];
@@ -56,6 +57,8 @@ class CheckoutController extends Controller
             }
             
             $product_details = Order_detail::where('id_order',$order->id)->get();
+
+            
             return response([
                 'message' => 'Success',
                 'ship' => new ShipResource($ship),

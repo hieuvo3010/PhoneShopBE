@@ -8,7 +8,7 @@ class Brand extends Model
 {
     //
     protected $fillable = [
-        'name', 'desc', 'status',
+        'name', 'desc', 'status','slug'
     ];
 
     public function product(){

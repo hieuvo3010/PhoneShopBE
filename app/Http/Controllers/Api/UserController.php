@@ -57,7 +57,7 @@ class UserController extends Controller
     public function register(Request $request) {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|between:2,100',
-            'email' => 'required|string|email|max:100|unique:users',
+            'email' => 'required|string|email|max:100|unique:users|unique:admins',
             'password' => 'required|string|confirmed|min:6',
         ]);
 
@@ -67,12 +67,12 @@ class UserController extends Controller
         $user = User::create(array_merge(
                     $validator->validated(),
                     ['password' => bcrypt($request->password)]
-                ))->sendEmailVerificationNotification();
+        ));//->sendEmailVerificationNotification();
                 //->sendEmailVerificationNotification()
         
         return response()->json([
             'message' => 'User successfully registered',
-            'user' => 'Phai very truoc moi co'
+            'user' => $user
         ], 201);
     }
 

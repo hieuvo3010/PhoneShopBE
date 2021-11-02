@@ -8,7 +8,7 @@ class Order_detail extends Model
 {
     //
     protected $fillable = [
-        'id_order', 'id_product','product_name','product_price','product_quantity','product_coupon','product_fee','order_code'
+        'id_order', 'id_product','product_name','product_price','product_quantity','product_coupon','product_fee','order_code','product_image'
     ];
 
     public function order(){
