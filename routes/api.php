@@ -21,7 +21,7 @@ use Illuminate\Http\Request;
 Route::group([
     'middleware' => 'api',
     'prefix' => 'auth',
-    'middleware' => 'cors'
+   
 
 ], function ($router) {
     
@@ -32,7 +32,7 @@ Route::group([
     Route::get('home/product/new', 'HomeController@show_product_new');
     Route::get('home/product/{sort}', 'HomeController@show_product');
     
-    Route::group(['prefix' => 'user','middleware' => ['assign.guard:users']],function ()
+    Route::group(['prefix' => 'user','middleware' => ['assign.guard:users','cors']],function ()
     {
         Route::post('/login', 'Api\UserController@login');
         Route::post('/register', 'Api\UserController@register');
@@ -46,7 +46,7 @@ Route::group([
         
     });
 
-    Route::group(['prefix' => 'admin','middleware' => ['assign.guard:admins']],function ()
+    Route::group(['prefix' => 'admin','middleware' => ['assign.guard:admins','cors']],function ()
     {
         Route::post('/login', 'Api\AdminController@login');
         Route::post('/register', 'Api\AdminController@register');
