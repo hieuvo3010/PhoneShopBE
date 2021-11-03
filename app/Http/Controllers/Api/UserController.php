@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\Auth;
 use App\User;
-
+use App\Http\Resources\UserResource;
 use Validator;
 
 class UserController extends Controller
@@ -142,4 +142,15 @@ class UserController extends Controller
             'user' => $user,
         ], 201);
     }
+
+    public function updateProfile(Request $request,$id) {
+        $user = User::findOrFail($id);
+        $user->fill($request->all());
+        $user->save();
+        return response([
+            'message' => 'Update done',
+            'data' => new UserResource($user)
+        ], 201);
+    }
+
 }

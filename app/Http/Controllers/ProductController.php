@@ -76,11 +76,12 @@ class ProductController extends Controller
      * @param  \App\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request)
     {
         //
         //return $product;
-        $product = Product::find($id)->with('brand')->get();
+        $id = $request->query('id');
+        $product = Product::findOrFail($id)->with('brand')->get()->first();
         return new ProductResource($product); //show trong mục chỉ định ProductResource
     }
 
@@ -89,6 +90,7 @@ class ProductController extends Controller
         //
         $product->update($request->all());
         return response([
+            'message' => 'Update done',
             'data' => new ProductResource($product)
         ], 201);
     }

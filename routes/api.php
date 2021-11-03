@@ -26,7 +26,11 @@ Route::group([
 ], function ($router) {
     
    
-    Route::apiResource('product', 'ProductController');
+    Route::apiResource('product', 'ProductController')->except([
+        'show'
+    ]);
+    Route::get('product_s', 'ProductController@show');
+    
     Route::apiResource('brand', 'BrandController');
     Route::get('home/brands/{id}', 'HomeController@show_product_with_brand');
     Route::get('home/product/new', 'HomeController@show_product_new');
@@ -39,6 +43,7 @@ Route::group([
         Route::post('/logout', 'Api\UserController@logout');
         Route::post('/refresh', 'Api\UserController@refresh');
         Route::get('/user-profile', 'Api\UserController@userProfile');
+        Route::put('/update-profile/{id}', 'Api\UserController@updateProfile');
         Route::post('/change-pass',  'Api\UserController@changePassWord');    
         Route::get('email/verify/{id}', 'Api\VerificationController@verify_user')->name('verification.verify'); // Make sure to keep this as your route name
         Route::get('email/resend', 'Api\VerificationController@resend')->name('verification.resend'); 
@@ -53,6 +58,7 @@ Route::group([
         Route::post('/logout', 'Api\AdminController@logout');
         Route::post('/refresh', 'Api\AdminController@refresh');
         Route::get('/user-profile', 'Api\AdminController@userProfile');
+        
         Route::post('/change-pass',  'Api\AdminController@changePassWord');    
         Route::get('email/verify/{id}', 'Api\VerificationController@verify_admin')->name('verification.verify_admin'); // Make sure to keep this as your route name
         Route::get('email/resend', 'Api\VerificationController@resend')->name('verification.resend'); 
