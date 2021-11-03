@@ -15,7 +15,7 @@ class CORS
      */
     public function handle($request, Closure $next)
     {
-        dd('test');
+        
         header("Access-Control-Allow-Origin: *");
 
         // ALLOW OPTIONS METHOD
@@ -31,6 +31,8 @@ class CORS
         $response = $next($request);
         foreach($headers as $key => $value)
             $response->header($key, $value);
+        
+        dd('test');
         return $response;
     }
 }
