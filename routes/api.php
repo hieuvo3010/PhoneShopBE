@@ -20,17 +20,19 @@ use Illuminate\Http\Request;
 
 Route::group([
     'middleware' => 'api',
-    'prefix' => 'auth',
+    // 'prefix' => 'auth',
    
 
 ], function ($router) {
     
    
     Route::apiResource('product', 'ProductController')->except([
-        'show'
+        'show','update','destroy'
     ]);
     Route::get('product_s', 'ProductController@show');
-    
+    Route::put('product', 'ProductController@update');
+    Route::delete('product', 'ProductController@delete');
+
     Route::apiResource('brand', 'BrandController');
     Route::get('home/brands/{id}', 'HomeController@show_product_with_brand');
     Route::get('home/product/new', 'HomeController@show_product_new');
@@ -43,7 +45,7 @@ Route::group([
         Route::post('/logout', 'Api\UserController@logout');
         Route::post('/refresh', 'Api\UserController@refresh');
         Route::get('/user-profile', 'Api\UserController@userProfile');
-        Route::put('/update-profile/{id}', 'Api\UserController@updateProfile');
+        Route::put('/update-profile', 'Api\UserController@updateProfile');
         Route::post('/change-pass',  'Api\UserController@changePassWord');    
         Route::get('email/verify/{id}', 'Api\VerificationController@verify_user')->name('verification.verify'); // Make sure to keep this as your route name
         Route::get('email/resend', 'Api\VerificationController@resend')->name('verification.resend'); 

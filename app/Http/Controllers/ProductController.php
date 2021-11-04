@@ -85,9 +85,11 @@ class ProductController extends Controller
         return new ProductResource($product); //show trong mục chỉ định ProductResource
     }
 
-    public function update(Request $request, Product $product)
+    public function update(Request $request)
     {
         //
+        $id = $request->query('id');
+        $product = Product::findOrFail($id);
         $product->update($request->all());
         return response([
             'message' => 'Update done',
@@ -101,9 +103,12 @@ class ProductController extends Controller
      * @param  \App\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Product $product)
+    public function delete(Request $request)
     {
         //
-        return $product->delete();
+        $id = $request->query('id');
+        $product = Product::findOrFail($id);
+        $product->destroy($id);
+        return response()->json('null',204);
     }
 }

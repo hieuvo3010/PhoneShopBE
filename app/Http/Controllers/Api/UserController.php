@@ -102,7 +102,8 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function userProfile() {
+    public function userProfile(Request $request) {
+        
         return response()->json(auth()->user());
     }
 
@@ -152,7 +153,8 @@ class UserController extends Controller
         ], 201);
     }
 
-    public function updateProfile(Request $request,$id) {
+    public function updateProfile(Request $request) {
+        $id = $request->query('id');
         $user = User::findOrFail($id);
         $user->fill($request->all());
         $user->save();
