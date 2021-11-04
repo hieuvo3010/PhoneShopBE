@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\Auth;
-use App\User;
+use App\User, Hash;
 use App\Http\Resources\UserResource;
 use Validator;
 
@@ -128,10 +128,19 @@ class UserController extends Controller
             'new_password' => 'required|string|confirmed|min:6',
         ]);
 
+        
+
         if($validator->fails()){
             return response()->json($validator->errors()->toJson(), 400);
         }
         $userId = auth()->user()->id;
+
+        if (!(Hash::check($request->get('old_password'), Auth::user()->password))) {
+            // The passwords matches
+            return response()->json([
+                'error' => 'Your current password does not matches with the password you provided. Please try again.',
+            ], 400);
+        }
 
         $user = User::where('id', $userId)->update(
                     ['password' => bcrypt($request->new_password)]
