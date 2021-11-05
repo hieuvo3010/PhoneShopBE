@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Admin;
+use App\Admin, App\User;
 use Validator;
 class AdminController extends Controller
 {
@@ -138,6 +138,14 @@ class AdminController extends Controller
         return response()->json([
             'message' => 'User successfully changed password',
             'admin' => $admin,
+        ], 201);
+    }
+
+    public function show_account_user(Request $request){
+        $account = User::all();
+        return response()->json([
+            'message' => 'All account users',
+            'user' => $account,
         ], 201);
     }
 }

@@ -34,9 +34,9 @@ Route::group([
     Route::delete('product', 'ProductController@delete');
 
     Route::apiResource('brand', 'BrandController');
-    Route::get('home/brands/{id}', 'HomeController@show_product_with_brand');
-    Route::get('home/product/new', 'HomeController@show_product_new');
-    Route::get('home/product/{sort}', 'HomeController@show_product');
+    Route::get('home/brand/products', 'HomeController@show_product_with_brand');
+    Route::get('home/products', 'HomeController@show_product');
+    Route::get('home/products_between', 'HomeController@show_product_between_price');
     
     Route::group(['prefix' => 'user','middleware' => ['assign.guard:users']],function ()
     {
@@ -55,6 +55,7 @@ Route::group([
 
     Route::group(['prefix' => 'admin','middleware' => ['assign.guard:admins']],function ()
     {
+        Route::get('/show_account_user', 'Api\AdminController@show_account_user');
         Route::post('/login', 'Api\AdminController@login');
         Route::post('/register', 'Api\AdminController@register');
         Route::post('/logout', 'Api\AdminController@logout');
@@ -63,7 +64,8 @@ Route::group([
         
         Route::post('/change-pass',  'Api\AdminController@changePassWord');    
         Route::get('email/verify/{id}', 'Api\VerificationController@verify_admin')->name('verification.verify_admin'); // Make sure to keep this as your route name
-        Route::get('email/resend', 'Api\VerificationController@resend')->name('verification.resend'); 
+        Route::get('email/resend', 'Api\VerificationController@resend')->name('verification.resend');
+
     });
     
 // Google Sign In

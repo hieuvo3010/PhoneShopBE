@@ -156,7 +156,14 @@ class UserController extends Controller
     public function updateProfile(Request $request) {
         $id = $request->query('id');
         $user = User::findOrFail($id);
-        $user->fill($request->all());
+        
+        $user->fill($request->validate([
+            'name' => 'required|max:255',
+            'image' => 'required',
+            'dob' => 'required',
+            'sex' => 'required',
+            'email' => 'required',
+        ]));
         $user->save();
         return response([
             'message' => 'Update done',
