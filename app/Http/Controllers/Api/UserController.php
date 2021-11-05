@@ -154,19 +154,33 @@ class UserController extends Controller
     }
 
     public function updateProfile(Request $request) {
-        $id = $request->query('id');
-        $user = User::findOrFail($id);
-        
-        $user->fill($request->validate([
-            'name' => 'required|max:255',
-            'image' => 'required',
-            'dob' => 'required',
-            'sex' => 'required',
-            'email' => 'required',
-        ]));
-        $user->save();
+        try {
+            $validator = Validator::make($request->all(),[
+                'name' => 'required|max:255',
+                'image' => 'required',
+                'dob' => 'required',
+                'sex' => 'required',
+                'email' => 'required',
+            ]);
+            if($validator->fails()){
+                $error = $validator->errors()->all()[0];
+                return response()->json(['status' => false, 'message' => $error,'data' => []],422);
+            }else{
+                $user = auth()->user();
+                $user->update([
+                    'name' => $request->name,
+                    'image' => $request->image,
+                    'dob' => $request->dob,
+                    'sex' => $request->sex,
+                    'email' => $request->email,
+                ]);
+            }
+        }catch (ValidationException $e){
+            return response()->json(['status' => 'false','message' =>$e->getMessage(),'data' =>[]],500 );
+        }
+      
         return response([
-            'message' => 'Update done',
+            'message' => 'Update profile successfully',
             'data' => new UserResource($user)
         ], 201);
     }
