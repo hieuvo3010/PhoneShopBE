@@ -91,7 +91,7 @@ class ProductController extends Controller
         //
         //return $product;
         $id = $request->query('id');
-        $product = Product::findOrFail($id)->with('brand')->get()->first();
+        $product = Product::with('brand','product_info')->where('id',$id)->get();
         return new ProductResource($product); //show trong mục chỉ định ProductResource
     }
 
@@ -101,6 +101,8 @@ class ProductController extends Controller
         $id = $request->query('id');
         $product = Product::findOrFail($id);
         $product->update($request->all());
+        $product_info = Product_info::findOrFail($id, $product->id_product_info);
+        $product_info->update($request->all());
         return response([
             'message' => 'Update done',
             'data' => new ProductResource($product)
