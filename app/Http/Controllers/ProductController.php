@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Product;
-use App\Category;
+use App\Category, App\Product_info;
 use App\Brand;
 use File;
 use Storage;
@@ -27,18 +27,8 @@ class ProductController extends Controller
     {
         //
         //$products = Product::orderBy('id','DESC')->paginate(5);
-        $products = Product::paginate(10);
+        $products = Product::with('brand','product_info')->orderBy('id','DESC')->paginate(10);
         return ProductResource::collection($products);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -50,7 +40,23 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         //
-   
+        $product_info = new Product_info();
+        $product_info->fill($request->validate([
+            'screen' => 'nullable',
+            'rear_camera' => 'nullable',
+            'selfie_camera' => 'nullable',
+            'ram' => 'nullable',
+            'internal_memory' => 'nullable',
+            'cpu' => 'nullable',
+            'gpu' => 'nullable',
+            'battery' => 'nullable',
+            'sim' => 'nullable',
+            'os' => 'nullable',
+            'made' => 'nullable',
+            'time' => 'nullable',
+        ]));
+        $product_info->save();
+        $product_info->id;
         
         $product = new Product();
         $product->fill($request->validate([
@@ -64,7 +70,11 @@ class ProductController extends Controller
             'price' => 'required',
             'slug' => 'required|unique:products'
         ]));
+        $product->id_product_info =  $product_info->id;
         $product->save();
+        $id_product = $product->id;
+
+        
         return response([
             'data' => (new ProductResource($product))
         ], 201);

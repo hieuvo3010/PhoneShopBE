@@ -19,6 +19,7 @@ class CreateProductsTable extends Migration
             $table->integer('discount');
             $table->integer('quantity');
             $table->integer('id_brand');
+            $table->integer('id_product_info');
             $table->text('desc');
             $table->integer('price');
             $table->string('slug');

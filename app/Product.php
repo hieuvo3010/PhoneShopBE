@@ -9,7 +9,7 @@ class Product extends Model
     //
 
     protected $fillable = [
-        'name','desc','discount','image','status','id_brand','price','slug','images_product','quantity'
+        'name','desc','discount','image','status','id_brand','price','slug','images_product','quantity','id_product_info'
     ];
 
     protected $casts  = [ 'images_product' => 'array' ];
@@ -20,6 +20,8 @@ class Product extends Model
     public function brand(){
         return $this->belongsTo('App\Brand','id_brand');
     }
-
+    public function product_info(){
+        return $this->belongsTo('App\Product_info','id_product_info');
+    }
    
 }

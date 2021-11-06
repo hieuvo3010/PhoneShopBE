@@ -53,6 +53,8 @@ class HomeController extends Controller
             $products = Product::orderBy('price','DESC')->paginate($this->pagesize);
         }elseif($sort == 'price-asc'){
             $products = Product::orderBy('price','ASC')->paginate($this->pagesize);
+        }elseif($sort == 'price-discount'){
+            $products = Product::orderBy('price','ASC')->paginate($this->pagesize);
         }
         return response([
             'message' => 'Success products sort',
