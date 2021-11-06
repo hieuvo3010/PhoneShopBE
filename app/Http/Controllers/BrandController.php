@@ -21,7 +21,7 @@ class BrandController extends Controller
     public function index()
     {
         //
-        $bands = Brand::paginate(10);
+        $bands = Brand::orderBy('id','DESC')->paginate(10);
         return BrandResource::collection($bands);
     }
 
@@ -63,10 +63,12 @@ class BrandController extends Controller
      * @param  \App\Brand  $brand
      * @return \Illuminate\Http\Response
      */
-    public function show(Brand $brand)
+    public function show(Request $request)
     {
         //
-        return new BrandResource($category);
+        $id = $request->query('id');
+        $brand = Brand::where('id',$id)->get();
+        return new BrandResource($brand);
     }
 
     /**
@@ -87,24 +89,30 @@ class BrandController extends Controller
      * @param  \App\Brand  $brand
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Brand $brand)
+    public function update(Request $request)
     {
         //
+        $id = $request->query('id');
+        $brand = Brand::findOrFail($id);
         $brand->update($request->all());
         return response([
+            'message' => 'Updated successfully',
             'data' => new BrandResource($brand)
         ], 201);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Brand  $brand
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Brand $brand)
+
+    public function delete(Request $request)
     {
         //
-        return $brand->delete();
+        $id = $request->query('id');
+        $brand = Brand::findOrFail($id);
+        $result = $brand->destroy($id);
+        if($result){
+            return response([
+                'message' => 'Delete brand successfully'
+            ], 201);
+        }
     }
+
 }

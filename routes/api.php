@@ -33,7 +33,14 @@ Route::group([
     Route::put('product', 'ProductController@update');
     Route::delete('product', 'ProductController@delete');
 
-    Route::apiResource('brand', 'BrandController');
+    Route::apiResource('brand', 'BrandController')->except([
+        'show','destroy',
+    ]);
+
+    Route::get('brand_s', 'BrandController@show');
+    Route::put('brand', 'BrandController@update');
+    Route::delete('brand', 'BrandController@delete');
+
     Route::get('home/brand/products', 'HomeController@show_product_with_brand');
     Route::get('home/products', 'HomeController@show_product');
     Route::get('home/products_between', 'HomeController@show_product_between_price');

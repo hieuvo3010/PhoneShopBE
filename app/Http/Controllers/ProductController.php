@@ -100,8 +100,10 @@ class ProductController extends Controller
         //
         $id = $request->query('id');
         $product = Product::findOrFail($id);
+       
         $product->update($request->all());
-        $product_info = Product_info::findOrFail($id, $product->id_product_info);
+        
+        $product_info = Product_info::findOrFail($product->id_product_info);
         $product_info->update($request->all());
         return response([
             'message' => 'Update done',
@@ -109,20 +111,18 @@ class ProductController extends Controller
         ], 201);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Product  $product
-     * @return \Illuminate\Http\Response
-     */
+   
     public function delete(Request $request)
     {
         //
         $id = $request->query('id');
+        
         $product = Product::findOrFail($id);
-        $product->destroy($id);
-        return response([
-            'message' => 'Delete product successfully'
-        ], 204);
+        $result = $product->destroy($id);
+        if($result){
+            return response([
+                'message' => 'Delete product successfully'
+            ], 201);
+        }
     }
 }
