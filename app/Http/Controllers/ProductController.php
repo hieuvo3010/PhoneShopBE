@@ -61,7 +61,7 @@ class ProductController extends Controller
         $product = new Product();
         $product->fill($request->validate([
             'name' => 'required|max:255|unique:products',
-            'desc' => 'required|max:255',
+            'desc' => 'required',
             'image' => 'required',
             'images_product' => 'nullable',
             'id_brand' => 'required',
