@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Ship, App\Order, App\Order_detail;
+use App\Ship, App\Order, App\Order_detail, App\Product;
 use App\Http\Resources\ShipResource,App\Http\Resources\OrderResource,App\Http\Resources\OrderDetailResource;
 class CheckoutController extends Controller
 {
@@ -46,12 +46,17 @@ class CheckoutController extends Controller
                     $order_details->order_code = $order->order_code;
                     $order_details->id_order = $order_id;
                     $order_details->id_product = $cart['product_id'];
-                    $order_details->product_image = $cart['product_image'];
-                    $order_details->product_name = $cart['product_name'];
-                    $order_details->product_price = $cart['product_price'];
-                    $order_details->product_quantity = $cart['product_qty'];
+                    $product = Product::findOrFail($order_details->id_product);
+                    $order_details->product_image = $product->image;
+                    $order_details->product_name = $product->name;
+                    if($product->discount){
+                        $order_details->product_price = $product->price - (($product->price*$product->discount)/100) ;
+                    }else{
+                        $order_details->product_price = $product->price;
+                    }
+                    $order_details->product_quantity = $cart['product_quantity'];
                     $order_details->product_coupon = $cart['order_coupon'];
-                    $order_details->product_fee = $cart['order_fee'];
+                    $order_details->product_fee = 10000;
                     $order_details->save();
                 }
             }

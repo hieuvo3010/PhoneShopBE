@@ -47,6 +47,8 @@ Route::group([
     
     Route::group(['prefix' => 'user','middleware' => ['assign.guard:users']],function ()
     {
+        Route::get('/order-detail', 'Api\UserController@show_order_detail');
+        Route::get('/order', 'Api\UserController@show_all_order');
         Route::post('/login', 'Api\UserController@login');
         Route::post('/register', 'Api\UserController@register');
         Route::post('/logout', 'Api\UserController@logout');
@@ -62,6 +64,9 @@ Route::group([
 
     Route::group(['prefix' => 'admin','middleware' => ['assign.guard:admins']],function ()
     {
+        
+        Route::get('/order-user-detail', 'Api\AdminController@show_detail_order');
+        Route::get('/order-user', 'Api\AdminController@show_all_order');
         Route::get('/show_account_user', 'Api\AdminController@show_account_user');
         Route::post('/login', 'Api\AdminController@login');
         Route::post('/register', 'Api\AdminController@register');

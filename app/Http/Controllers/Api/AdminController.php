@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Admin, App\User;
+use App\Admin, App\User, App\Order, App\Order_detail;
+use App\Http\Resources\OrderResource,App\Http\Resources\Product\ProductResource;
+use App\Http\Resources\UserResource;
 use Validator;
 class AdminController extends Controller
 {
@@ -145,7 +147,27 @@ class AdminController extends Controller
         $account = User::all();
         return response()->json([
             'message' => 'All account users',
-            'user' => $account,
+            'data' => new UserResource($account)
+        ], 201);
+    }
+
+    public function show_all_order(Request $request){
+        $orders = Order::orderBy('created_at', 'DESC')->get();
+        return response()->json([
+            'message' => 'All orders',
+            'data' => new OrderResource($orders)
+        ], 201);
+    }
+
+    public function show_detail_order(Request $request){
+        $order_code = $request->query('order_code');
+        $order= Order::where('order_code', $order_code)->first();
+      
+        $products_with_order = Order_detail::where('order_code', $order->order_code)->get();
+        
+        return response()->json([
+            'message' => 'Detail order '.$order->order_code ,
+            'data' => new ProductResource($products_with_order)
         ], 201);
     }
 }

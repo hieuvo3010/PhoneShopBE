@@ -4,10 +4,11 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-
+use App\Order, App\Order_detail;
 use Illuminate\Support\Facades\Auth;
 use App\User, Hash;
 use App\Http\Resources\UserResource;
+use App\Http\Resources\OrderResource,App\Http\Resources\Product\ProductResource;
 use Validator;
 
 class UserController extends Controller
@@ -185,4 +186,24 @@ class UserController extends Controller
         ], 201);
     }
 
+    public function show_order_detail(Request $request){
+        $userId = auth()->user()->id;
+        $order_code = $request->query('order_code');
+        $order= Order::with('order_detail')->where('id_user', $userId)->where('order_code', $order_code)->first();
+        $products_with_order = Order_detail::where('order_code', $order->order_code)->get();
+        
+        return response()->json([
+            'message' => 'Detail order '.$order->order_code ,
+            'data' => new ProductResource($products_with_order)
+        ], 201);
+    }
+
+    public function show_all_order(Request $request){
+        $userId = auth()->user()->id;
+        $orders = Order::where('id_user', $userId)->orderBy('created_at','DESC')->get();
+        return response()->json([
+            'message' => 'All orders',
+            'data' => new OrderResource($orders)
+        ], 201);
+    }
 }
