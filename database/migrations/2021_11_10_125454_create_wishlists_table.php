@@ -16,6 +16,7 @@ class CreateWishlistsTable extends Migration
         Schema::create('wishlists', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->integer('id_user');
+            $table->integer('id_product');
             $table->timestamps();
         });
     }
@@ -30,3 +31,13 @@ class CreateWishlistsTable extends Migration
         Schema::dropIfExists('wishlists');
     }
 }
+// Schema::create('wishlist_details', function (Blueprint $table) {
+//     $table->bigIncrements('id');
+//     $table->integer('id_wishlist');
+//     $table->integer('id_product');
+//     $table->string('product_image');
+//     $table->string('product_name');
+//     $table->string('product_price');
+//     $table->string('product_discount');    
+//     $table->timestamps();
+// });

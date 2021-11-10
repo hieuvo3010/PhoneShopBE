@@ -24,7 +24,7 @@ class Product extends Model
         return $this->belongsTo('App\Product_info','id_product_info');
     }
     public function wishlist(){
-        return $this->hasMany('App\Wishlist');
+        return $this->hasOne('App\Wishlist');
      }
    
 }

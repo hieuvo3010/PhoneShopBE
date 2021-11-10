@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Auth;
-use App\User, App\Product, App\Wishlist,App\Wishlist_detail;
+use App\User, App\Product, App\Wishlist;
 use App\Http\Resources\WishlistResource;
 class WishlistController extends Controller
 {
@@ -18,15 +18,11 @@ class WishlistController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index()
     {
         //
-        $user = auth()->user();
-        $userId = auth()->user()->id;
-
-         //$wl = Wishlist_detail::with('wishlist','product')->where('id_wishlist',$wishlist->id)->get();
-        $wl = Wishlist::where('id_user',$userId)->first();
-        $wishlists = Wishlist_detail::where("id_wishlist", "=", $wl->id)->get(); //->orderby('created_at', 'desc')->paginate(10);
+        $user = Auth::user();
+        $wishlists = Wishlist::with('product')->where("id_user", "=", $user->id)->orderby('id', 'desc')->paginate(10);
         return WishlistResource::collection($wishlists);
     }
 
@@ -53,11 +49,11 @@ class WishlistController extends Controller
             'id_product' =>'required',
           ));
 
-          $status=Wishlist_detail::with('wishlist')
+          $status=Wishlist::where('id_user',auth()->user()->id)
             ->where('id_product',$request->id_product)
             ->first();
-        //
-        if(isset($status->id_product) and isset($request->id_product))
+        
+        if(isset($status->id_user) and isset($request->id_product))
         {
             return response([
                 'message' => 'This item is already in your wishlist!',
@@ -65,24 +61,11 @@ class WishlistController extends Controller
         }
         else
         {
-        
-        
         $wishlist = new Wishlist();
         $wishlist->id_user = auth()->user()->id;
+        $wishlist->id_product = $request->id_product;
         $wishlist->save();
 
-        $wishlist_detail = new Wishlist_detail();
-        $wishlist_detail->id_product = $request->id_product;
-        $product = Product::find($request->id_product);
-        $wishlist_detail->product_image = $product->image;
-        $wishlist_detail->product_name = $product->name;
-        $wishlist_detail->product_discount = $product->discount;
-        $wishlist_detail->product_price = $product->price;
-        $wishlist_detail->id_wishlist =  $wishlist->id;
-        $wishlist_detail->save();
-
-        
-     
         return response([
             'message' => 'Added to your wishlist.',
             'data' => (new WishlistResource($wishlist))
@@ -128,12 +111,12 @@ class WishlistController extends Controller
     {
         //
         $id = $request->query('id');
-        
-        $wishlist = Wishlist::findOrFail($id);
+        $user = Auth::user();
+        $wishlist = Wishlist::findOrFail($id)->where('id_user',$user->id)->first();
         $result = $wishlist->destroy($id);
         if($result){
             return response([
-                'message' => 'Item successfully deleted'
+                'message' => 'Delete product on wishlist'
             ], 201);
         }
     }
