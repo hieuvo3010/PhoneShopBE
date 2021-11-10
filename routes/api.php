@@ -13,7 +13,7 @@ use Illuminate\Http\Request;
 |
 */
 
-// Route::apiResource('post', 'Api\PostController');
+// Route::apiResource('post', 'PostController');
 // Route::apiResource('category', 'CategoryController');
 // Route::apiResource('product', 'ProductController');
 // Route::apiResource('brand', 'BrandController');
@@ -25,7 +25,11 @@ Route::group([
 
 ], function ($router) {
     
-   
+    Route::apiResource('wishlist', 'WishlistController')->except([
+        'show','update','destroy'
+    ]);
+    Route::delete('wishlist', 'WishlistController@delete');
+
     Route::apiResource('product', 'ProductController')->except([
         'show','update','destroy'
     ]);
@@ -47,17 +51,17 @@ Route::group([
     
     Route::group(['prefix' => 'user','middleware' => ['assign.guard:users']],function ()
     {
-        Route::get('/order-detail', 'Api\UserController@show_order_detail');
-        Route::get('/order', 'Api\UserController@show_all_order');
-        Route::post('/login', 'Api\UserController@login');
-        Route::post('/register', 'Api\UserController@register');
-        Route::post('/logout', 'Api\UserController@logout');
-        Route::post('/refresh', 'Api\UserController@refresh');
-        Route::get('/user-profile', 'Api\UserController@userProfile');
-        Route::put('/update-profile', 'Api\UserController@updateProfile');
-        Route::post('/change-pass',  'Api\UserController@changePassWord');    
-        Route::get('email/verify/{id}', 'Api\VerificationController@verify_user')->name('verification.verify'); // Make sure to keep this as your route name
-        Route::get('email/resend', 'Api\VerificationController@resend')->name('verification.resend'); 
+        Route::get('/order-detail', 'UserController@show_order_detail');
+        Route::get('/order', 'UserController@show_all_order');
+        Route::post('/login', 'UserController@login');
+        Route::post('/register', 'UserController@register');
+        Route::post('/logout', 'UserController@logout');
+        Route::post('/refresh', 'UserController@refresh');
+        Route::get('/user-profile', 'UserController@userProfile');
+        Route::put('/update-profile', 'UserController@updateProfile');
+        Route::post('/change-pass',  'UserController@changePassWord');    
+        Route::get('email/verify/{id}', 'VerificationController@verify_user')->name('verification.verify'); // Make sure to keep this as your route name
+        Route::get('email/resend', 'VerificationController@resend')->name('verification.resend'); 
         Route::post('/confirm-order', 'CheckoutController@confirm_order');
         
     });
@@ -65,22 +69,22 @@ Route::group([
     Route::group(['prefix' => 'admin','middleware' => ['assign.guard:admins']],function ()
     {
         
-        Route::get('/order-user-detail', 'Api\AdminController@show_detail_order');
-        Route::get('/order-user', 'Api\AdminController@show_all_order');
-        Route::get('/show_account_user', 'Api\AdminController@show_account_user');
-        Route::post('/login', 'Api\AdminController@login');
-        Route::post('/register', 'Api\AdminController@register');
-        Route::post('/logout', 'Api\AdminController@logout');
-        Route::post('/refresh', 'Api\AdminController@refresh');
-        Route::get('/user-profile', 'Api\AdminController@userProfile');
+        Route::get('/order-user-detail', 'AdminController@show_detail_order');
+        Route::get('/order-user', 'AdminController@show_all_order');
+        Route::get('/show_account_user', 'AdminController@show_account_user');
+        Route::post('/login', 'AdminController@login');
+        Route::post('/register', 'AdminController@register');
+        Route::post('/logout', 'AdminController@logout');
+        Route::post('/refresh', 'AdminController@refresh');
+        Route::get('/user-profile', 'AdminController@userProfile');
         
-        Route::post('/change-pass',  'Api\AdminController@changePassWord');    
-        Route::get('email/verify/{id}', 'Api\VerificationController@verify_admin')->name('verification.verify_admin'); // Make sure to keep this as your route name
-        Route::get('email/resend', 'Api\VerificationController@resend')->name('verification.resend');
+        Route::post('/change-pass',  'AdminController@changePassWord');    
+        Route::get('email/verify/{id}', 'VerificationController@verify_admin')->name('verification.verify_admin'); // Make sure to keep this as your route name
+        Route::get('email/resend', 'VerificationController@resend')->name('verification.resend');
 
     });
     
 // Google Sign In
-    Route::post('/get-google-sign-in-url', 'Api\GoogleController@getGoogleSignInUrl');
-    Route::get('/callback', 'Api\GoogleController@loginCallback');
+    Route::post('/get-google-sign-in-url', 'GoogleController@getGoogleSignInUrl');
+    Route::get('/callback', 'GoogleController@loginCallback');
 });

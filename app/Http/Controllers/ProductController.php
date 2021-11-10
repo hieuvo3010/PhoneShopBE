@@ -2,13 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Product;
-use App\Category, App\Product_info;
-use App\Brand;
-use File;
-use Storage;
-use DB;
 use Illuminate\Http\Request;
+use App\Category, App\Product_info,App\Brand,App\Product;
 use App\Http\Resources\Product\ProductResource;
 class ProductController extends Controller
 {
