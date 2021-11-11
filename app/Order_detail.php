@@ -8,7 +8,7 @@ class Order_detail extends Model
 {
     //
     protected $fillable = [
-        'id_order', 'id_product','product_name','product_price','product_quantity','product_coupon','product_fee','order_code','product_image'
+        'id_order', 'id_product','product_name','product_price','product_quantity','product_coupon','product_fee','order_code','product_image', 'id_ship'
     ];
 
     public function order(){
@@ -16,5 +16,8 @@ class Order_detail extends Model
     }
     public function product(){
         return $this->belongsTo('App\Product','id_product');
+    }
+    public function ship(){
+        return $this->belongsTo('App\Ship', 'id_ship');
     }
 }

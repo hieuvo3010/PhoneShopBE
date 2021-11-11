@@ -17,12 +17,12 @@ class CreateOrderDetailsTable extends Migration
             $table->bigIncrements('id');
             $table->string('order_code');
             $table->integer('id_order');
+            $table->integer('id_ship');
             $table->integer('id_product');
             $table->string('product_image');
             $table->string('product_name');
             $table->string('product_price');
             $table->string('product_quantity');    
-            
             $table->integer('product_fee'); 
             $table->timestamps();
         });

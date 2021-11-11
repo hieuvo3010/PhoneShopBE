@@ -32,7 +32,6 @@ class CheckoutController extends Controller
 
             $order = new Order();
             $order->id_user = auth()->user()->id;
-            $order->id_ship = $ship_id;
             $order->status = 1;
             $order->order_code = $order_code;
             $order->save();
@@ -47,6 +46,7 @@ class CheckoutController extends Controller
                     $order_details->order_code = $order->order_code;
                     $order_details->id_order = $order_id;
                     $order_details->id_product = $cart['product_id'];
+                    $order_details->id_ship = $ship_id;
                     $product = Product::findOrFail($order_details->id_product);
                     $order_details->product_image = $product->image;
                     $order_details->product_name = $product->name;

@@ -11,7 +11,7 @@ class Ship extends Model
         'name', 'email', 'phone','address','note','method'
     ];
 
-    public function order(){
-        return $this->hasOne('App\Order');
+    public function order_detail(){
+        return $this->hasOne('App\Order_detail');
     }
 }

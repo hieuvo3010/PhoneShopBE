@@ -17,7 +17,6 @@ class CreateOrdersTable extends Migration
             $table->bigIncrements('id');
             $table->string('order_code');
             $table->integer('id_user');
-            $table->integer('id_ship');
             $table->string('coupon')->nullable();
             $table->integer('total')->nullable();
             $table->integer('status')->default(1);
