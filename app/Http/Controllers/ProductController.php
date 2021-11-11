@@ -36,20 +36,7 @@ class ProductController extends Controller
     {
         //
         $product_info = new Product_info();
-        $product_info->fill($request->validate([
-            'screen' => 'nullable',
-            'rear_camera' => 'nullable',
-            'selfie_camera' => 'nullable',
-            'ram' => 'nullable',
-            'internal_memory' => 'nullable',
-            'cpu' => 'nullable',
-            'gpu' => 'nullable',
-            'battery' => 'nullable',
-            'sim' => 'nullable',
-            'os' => 'nullable',
-            'made' => 'nullable',
-            'time' => 'nullable',
-        ]));
+        $product_info->fill($request->all());
         $product_info->save();
         $product_info->id;
         

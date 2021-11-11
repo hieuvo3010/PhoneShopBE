@@ -41,6 +41,7 @@ class CheckoutController extends Controller
 
             // insert order_Detail
             if($data['cart']){
+                $total = 0;
                 foreach($data['cart'] as $key => $cart){
                     $order_details = new Order_detail();
                     $order_details->order_code = $order->order_code;
@@ -55,9 +56,16 @@ class CheckoutController extends Controller
                         $order_details->product_price = $product->price;
                     }
                     $order_details->product_quantity = $cart['product_quantity'];
-                    $order_details->product_coupon = $cart['order_coupon'];
-                    $order_details->product_fee = 10000;
+                    // $order_details->product_coupon = $cart['order_coupon'];
+                    $order_details->product_fee = 0;
                     $order_details->save();
+                    $total += $order_details->product_price;
+                }
+                if($request->has(['cart[order_coupon]'])){
+                    // $order->total = $total - ;
+                }else{
+                    $order->total = $total;
+                    $order->save();
                 }
             }
             

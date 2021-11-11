@@ -8,7 +8,7 @@ class Order extends Model
 {
     //
     protected $fillable = [
-        'status', 'id_user', 'id_ship','order_code'
+        'status', 'id_user', 'id_ship','order_code','total','coupon'
     ];
 
     public function user(){

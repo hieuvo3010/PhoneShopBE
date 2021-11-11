@@ -22,7 +22,7 @@ class CreateOrderDetailsTable extends Migration
             $table->string('product_name');
             $table->string('product_price');
             $table->string('product_quantity');    
-            $table->string('product_coupon')->nullable();
+            
             $table->integer('product_fee'); 
             $table->timestamps();
         });

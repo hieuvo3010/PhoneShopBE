@@ -24,7 +24,7 @@ class CreateProductsTable extends Migration
             $table->integer('price');
             $table->string('slug');
             $table->string('image');
-            $table->json('images_product');
+            $table->json('images_product')->nullable();
             $table->integer('status')->default(1);
             $table->timestamps();
         });
