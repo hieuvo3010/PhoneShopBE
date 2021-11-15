@@ -170,4 +170,29 @@ class AdminController extends Controller
             'data' => new ProductResource($products_with_order)
         ], 201);
     }
+
+    public function update_order(Request $request){
+        $order_code = $request->query('order_code');
+        $order= Order::where('order_code', $order_code)->first();
+        $order->fill($request->validate([
+            'status' => 'required'
+        ]));
+        $order->save();
+        return response([
+            'message' => 'Update status order successfully',
+            'data' => new OrderResource($order)
+        ], 201);
+    }
+
+    public function delete_order(Request $request){
+        $order_code = $request->query('order_code');
+        $order= Order::where('order_code', $order_code)->first();
+        $result = $order->destroy($order->id);
+        if($result){
+            return response([
+                'message' => 'Delete product successfully'
+            ], 201);
+        }
+    }
+
 }

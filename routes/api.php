@@ -73,9 +73,12 @@ Route::group([
 
     Route::group(['prefix' => 'admin','middleware' => ['assign.guard:admins']],function ()
     {
-        
+        // manager order
+        Route::delete('/delete-order', 'AdminController@delete_order')->name('delete-order');
+        Route::post('/update-order', 'AdminController@update_order')->name('update-order');
         Route::get('/order-user-detail', 'AdminController@show_detail_order');
         Route::get('/order-user', 'AdminController@show_all_order');
+
         Route::get('/show_account_user', 'AdminController@show_account_user');
         Route::post('/login', 'AdminController@login');
         Route::post('/register', 'AdminController@register');

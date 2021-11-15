@@ -12,6 +12,9 @@ class Product extends Model
         'name','desc','discount','image','status','id_brand','price','slug','images_product','quantity','id_product_info','colors_product'
     ];
 
+    
+
+
     protected $casts  = [ 'images_product' => 'array','colors_product' => 'array' ];
     public function category(){
         return $this->belongsTo('App\Category', 'id_category');
@@ -27,6 +30,6 @@ class Product extends Model
         return $this->hasOne('App\Wishlist');
      }
      public function rating(){
-        return $this->hasMany('App\Rating');
+        return $this->hasMany('App\Rating','id');
     }
 }

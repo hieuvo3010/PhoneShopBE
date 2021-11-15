@@ -99,7 +99,6 @@ class ProductController extends Controller
     {
         //
         $id = $request->query('id');
-        
         $product = Product::findOrFail($id);
         $result = $product->destroy($id);
         if($result){

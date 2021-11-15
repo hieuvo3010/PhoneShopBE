@@ -44,6 +44,7 @@ class RatingController extends Controller
         //
         $rating = new Rating();
         $id = $request->input('id');
+   
         $c =Rating::where('id_user',auth()->user()->id)->where('id_product',$id)->first();
         if(isset($c)){
             return response([
@@ -56,8 +57,13 @@ class RatingController extends Controller
             $rating->content = $request->content;
             $rating->star = $request->star;
             $rating->save();
+
+            $rating->id_product = $data['product_id'];
+            $rating->rating = $data['index'];
+
             return response([
-                'data' => (new RatingResource($rating))
+                'data' => (new RatingResource($rating)),
+                'rating_avg' => $p->avgRating,
             ], 201);
         }
         
@@ -74,9 +80,29 @@ class RatingController extends Controller
         //
         $id = $request->input('id');
         
-        $rating = Rating::where('id_product', $id)->get();
-      
-        return RatingResource::collection($rating);
+        $ratings = Rating::with('user')->where('id_product', $id)->get();
+        $ratingValues = [];
+
+        foreach ($ratings as $aRating) {
+            $ratingValues[] = $aRating->star;
+        }
+    
+        $ratingAverage = collect($ratingValues)->sum() / $ratings->count();
+        
+        $one_star = Rating::where('id_product', $id)->where('star', 1)->count();
+        $two_star = Rating::where('id_product', $id)->where('star', 2)->count();
+        $three_star = Rating::where('id_product', $id)->where('star', 3)->count();
+        $four_star = Rating::where('id_product', $id)->where('star', 4)->count();
+        $five_star = Rating::where('id_product', $id)->where('star', 5)->count();
+        return response()->json([
+                'data' => RatingResource::collection($ratings),
+                'star_avg' => $ratingAverage,
+                'one_star' => $one_star,
+                'two_star' => $two_star,
+                'three_star' => $three_star,
+                'four_star' => $four_star,
+                'five_star' => $five_star,
+            ], 201);
     }
 
     /**
