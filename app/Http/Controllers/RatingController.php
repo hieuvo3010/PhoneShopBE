@@ -44,7 +44,8 @@ class RatingController extends Controller
         //
         $rating = new Rating();
         $id = $request->input('id');
-        if(asset(Rating::where('id_user',auth()->user()->id)->where('id_product',$id)->first())){
+        $c =Rating::where('id_user',auth()->user()->id)->where('id_product',$id)->first();
+        if(isset($c)){
             return response([
                'message' => 'You rated it'
             ], 404);
