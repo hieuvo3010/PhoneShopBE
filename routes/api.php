@@ -25,6 +25,10 @@ Route::group([
 
 ], function ($router) {
     
+    Route::apiResource('rating', 'RatingController')->except([
+        'show','update','destroy'
+    ]);
+    Route::get('rating_s', 'RatingController@show');
     Route::apiResource('wishlist', 'WishlistController')->except([
         'show','update','destroy'
     ]);
@@ -34,6 +38,7 @@ Route::group([
         'show','update','destroy'
     ]);
     Route::get('product_s', 'ProductController@show');
+    
     Route::put('product', 'ProductController@update');
     Route::delete('product', 'ProductController@delete');
 

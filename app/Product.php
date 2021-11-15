@@ -9,10 +9,10 @@ class Product extends Model
     //
 
     protected $fillable = [
-        'name','desc','discount','image','status','id_brand','price','slug','images_product','quantity','id_product_info'
+        'name','desc','discount','image','status','id_brand','price','slug','images_product','quantity','id_product_info','colors_product'
     ];
 
-    protected $casts  = [ 'images_product' => 'array' ];
+    protected $casts  = [ 'images_product' => 'array','colors_product' => 'array' ];
     public function category(){
         return $this->belongsTo('App\Category', 'id_category');
     }
@@ -26,5 +26,7 @@ class Product extends Model
     public function wishlist(){
         return $this->hasOne('App\Wishlist');
      }
-   
+     public function rating(){
+        return $this->hasMany('App\Rating');
+    }
 }

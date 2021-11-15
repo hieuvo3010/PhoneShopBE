@@ -46,6 +46,7 @@ class ProductController extends Controller
             'desc' => 'required',
             'image' => 'required',
             'images_product' => 'nullable',
+            'colors_product' =>'required',
             'id_brand' => 'required',
             'discount' => 'required',
             'quantity' => 'required',

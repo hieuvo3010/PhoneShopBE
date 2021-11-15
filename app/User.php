@@ -55,4 +55,8 @@ class User extends Authenticatable implements JWTSubject
     public function order(){
         return $this->hasOne('App\Order');
     }
+
+    public function rating(){
+        return $this->hasOne('App\Rating');
+    }
 }

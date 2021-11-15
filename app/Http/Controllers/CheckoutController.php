@@ -51,11 +51,12 @@ class CheckoutController extends Controller
                     $order_details->product_image = $product->image;
                     $order_details->product_name = $product->name;
                     if($product->discount){
-                        $order_details->product_price = $product->price - (($product->price*$product->discount)/100) ;
+                        $order_details->product_price = round($product->price - (($product->price*$product->discount)/100)) ;
                     }else{
                         $order_details->product_price = $product->price;
                     }
                     $order_details->product_quantity = $cart['product_quantity'];
+                    $order_details->product_color = $cart['product_color'];
                     // $order_details->product_coupon = $cart['order_coupon'];
                     $order_details->product_fee = 0;
                     $order_details->save();
