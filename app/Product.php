@@ -9,13 +9,18 @@ class Product extends Model
     //
 
     protected $fillable = [
-        'name','desc','discount','image','status','id_brand','price','slug','images_product','quantity','id_product_info','colors_product'
+        'name','desc','discount','image','status','id_brand','price','slug','images_product','quantity','id_product_info'
     ];
 
     
 
 
-    protected $casts  = [ 'images_product' => 'array','colors_product' => 'array' ];
+    protected $casts  = [ 'images_product' => 'array'];
+
+    public function color(){
+        return $this->belongsTo('App\Colors_product', 'id_colors_product');
+    }
+
     public function category(){
         return $this->belongsTo('App\Category', 'id_category');
     }
@@ -32,4 +37,8 @@ class Product extends Model
      public function rating(){
         return $this->hasMany('App\Rating','id');
     }
+    public function attributes(){
+        return $this->belongsToMany('App\Attribute');
+    }
+ 
 }

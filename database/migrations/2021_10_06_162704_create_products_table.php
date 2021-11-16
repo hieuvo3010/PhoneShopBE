@@ -25,7 +25,6 @@ class CreateProductsTable extends Migration
             $table->string('slug');
             $table->string('image');
             $table->json('images_product')->nullable();
-            $table->json('colors_product');
             $table->integer('status')->default(1);
             $table->timestamps();
         });

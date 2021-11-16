@@ -7,7 +7,16 @@ use App\Category, App\Product_info,App\Brand,App\Product;
 use App\Http\Resources\Product\ProductResource;
 class ProductController extends Controller
 {
+    // public $attr;
+    // public $inputs= [];
+    // public $attributes_arr = [];
+    // public $attributes_value;
 
+    // public function add(){
+    //     if(!in_array($this->attr,$this->attributes_arr)){
+    //         array_push($this->attributes_arr,$this->attr);
+    //     }
+    // }
     public function __construct() 
     {
         //
@@ -22,7 +31,7 @@ class ProductController extends Controller
     {
         //
         //$products = Product::orderBy('id','DESC')->paginate(5);
-        $products = Product::with('brand','product_info')->orderBy('id','DESC')->paginate(10);
+        $products = Product::with('brand','product_info','attributes')->orderBy('id','DESC')->paginate(10);
         return ProductResource::collection($products);
     }
 
@@ -35,6 +44,7 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         //
+        
         $product_info = new Product_info();
         $product_info->fill($request->all());
         $product_info->save();
@@ -46,7 +56,6 @@ class ProductController extends Controller
             'desc' => 'required',
             'image' => 'required',
             'images_product' => 'nullable',
-            'colors_product' =>'required',
             'id_brand' => 'required',
             'discount' => 'required',
             'quantity' => 'required',
@@ -54,8 +63,15 @@ class ProductController extends Controller
             'slug' => 'required|unique:products'
         ]));
         $product->id_product_info =  $product_info->id;
-        $product->save();
+         $product->save();
+        
         $id_product = $product->id;
+        if(!empty($request->colors)){
+            foreach ($request->get('colors') as $key => $value) {
+                $product->attributes()->attach($value);
+                $product->save();
+            }
+        }
 
         
         return response([
@@ -74,7 +90,7 @@ class ProductController extends Controller
         //
         //return $product;
         $id = $request->query('id');
-        $product = Product::with('brand','product_info')->where('id',$id)->get();
+        $product = Product::with('brand','product_info','attributes')->where('id',$id)->get();
         return new ProductResource($product); //show trong mục chỉ định ProductResource
     }
 
@@ -85,7 +101,6 @@ class ProductController extends Controller
         $product = Product::findOrFail($id);
        
         $product->update($request->all());
-        
         $product_info = Product_info::findOrFail($product->id_product_info);
         $product_info->update($request->all());
         return response([
@@ -100,6 +115,7 @@ class ProductController extends Controller
         //
         $id = $request->query('id');
         $product = Product::findOrFail($id);
+        $product->attributes()->detach();
         $result = $product->destroy($id);
         if($result){
             return response([

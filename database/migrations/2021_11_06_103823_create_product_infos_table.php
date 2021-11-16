@@ -27,6 +27,7 @@ class CreateProductInfosTable extends Migration
             $table->string('os');
             $table->string('made');
             $table->string('time');
+           
             $table->timestamps();
         });
     }
