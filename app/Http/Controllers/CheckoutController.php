@@ -49,9 +49,10 @@ class CheckoutController extends Controller
                     $order_details->id_ship = $ship_id;
                     $product = Product::findOrFail($order_details->id_product);
                     $attributes = $product->attributes;
+                    
                     foreach ($attributes as $value){
                         if($value->id == $cart['product_color']){
-                            $order_details->product_color = $cart['product_color'];
+                            $order_details->product_color = $value->name;
                         }
                     }
                     $order_details->product_image = $product->image;

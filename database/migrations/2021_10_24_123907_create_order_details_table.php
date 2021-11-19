@@ -23,7 +23,7 @@ class CreateOrderDetailsTable extends Migration
             $table->string('product_name');
             $table->string('product_price');
             $table->string('product_color');
-            $table->string('product_quantity');    
+            $table->integer('product_quantity');    
             $table->integer('product_fee'); 
             $table->timestamps();
         });

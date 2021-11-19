@@ -90,7 +90,7 @@ class ProductController extends Controller
         //
         //return $product;
         $id = $request->query('id');
-        $product = Product::with('brand','product_info','attributes')->where('id',$id)->get();
+        $product = Product::with('brand','product_info','attributes','rating')->where('id',$id)->get();
         return new ProductResource($product); //show trong mục chỉ định ProductResource
     }
 
