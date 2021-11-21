@@ -26,16 +26,6 @@ class BrandController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -67,19 +57,8 @@ class BrandController extends Controller
     {
         //
         $id = $request->query('id');
-        $brand = Brand::where('id',$id)->get();
+        $brand = Brand::with('product')->where('id',$id)->get();
         return new BrandResource($brand);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Brand  $brand
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Brand $brand)
-    {
-        //
     }
 
     /**

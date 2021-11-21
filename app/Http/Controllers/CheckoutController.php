@@ -31,7 +31,7 @@ class CheckoutController extends Controller
             $ship_id = $ship->id; //$shipping_id = DB::table('ships')->insertGetId($data);
 
             $order = new Order();
-            $order->id_user = auth()->user()->id;
+            $order->user_id = auth()->user()->id;
             $order->status = 1;
             $order->order_code = $order_code;
             $order->save();
@@ -44,10 +44,10 @@ class CheckoutController extends Controller
                 foreach($data['cart'] as $key => $cart){
                     $order_details = new Order_detail();
                     $order_details->order_code = $order->order_code;
-                    $order_details->id_order = $order_id;
-                    $order_details->id_product = $cart['product_id'];
-                    $order_details->id_ship = $ship_id;
-                    $product = Product::findOrFail($order_details->id_product);
+                    $order_details->order_id = $order_id;
+                    $order_details->product_id = $cart['product_id'];
+                    $order_details->ship_id = $ship_id;
+                    $product = Product::findOrFail($order_details->product_id);
                     $attributes = $product->attributes;
                     
                     foreach ($attributes as $value){
@@ -77,7 +77,7 @@ class CheckoutController extends Controller
                 }
             }
             
-            $product_details = Order_detail::where('id_order',$order->id)->get();
+            $product_details = Order_detail::where('order_id',$order->id)->get();
 
             
             return response([

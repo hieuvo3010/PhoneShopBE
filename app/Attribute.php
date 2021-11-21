@@ -13,7 +13,4 @@ class Attribute extends Model
     public function products(){
         return $this->belongsToMany('App\Product');
     }
-    public function teamMembers(){
-        return $this->belongsToMany('App\Product')->withPivot('id');;
-    }
 }

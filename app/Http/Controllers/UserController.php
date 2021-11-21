@@ -189,7 +189,7 @@ class UserController extends Controller
     public function show_order_detail(Request $request){
         $userId = auth()->user()->id;
         $order_code = $request->query('order_code');
-        $order= Order::with('order_detail')->where('id_user', $userId)->where('order_code', $order_code)->first();
+        $order= Order::with('order_detail')->where('user_id', $userId)->where('order_code', $order_code)->first();
         $products_with_order = Order_detail::with('ship')->where('order_code', $order->order_code)->get();
         
         return response()->json([
@@ -200,7 +200,7 @@ class UserController extends Controller
 
     public function show_all_order(Request $request){
         $userId = auth()->user()->id;
-        $orders = Order::where('id_user', $userId)->orderBy('created_at','DESC')->get();
+        $orders = Order::where('user_id', $userId)->orderBy('created_at','DESC')->get();
         return response()->json([
             'message' => 'All orders',
             'data' => new OrderResource($orders)

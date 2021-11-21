@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Category, App\Product_info,App\Brand,App\Product;
+use App\Category, App\Product_info,App\Brand,App\Product,App\Rating;
 use App\Http\Resources\Product\ProductResource;
 class ProductController extends Controller
 {
@@ -31,7 +31,7 @@ class ProductController extends Controller
     {
         //
         //$products = Product::orderBy('id','DESC')->paginate(5);
-        $products = Product::with('brand','product_info','attributes')->orderBy('id','DESC')->paginate(10);
+        $products = Product::with('brand','product_info','attributes','ratings')->orderBy('id','DESC')->paginate(10);
         return ProductResource::collection($products);
     }
 
@@ -56,16 +56,16 @@ class ProductController extends Controller
             'desc' => 'required',
             'image' => 'required',
             'images_product' => 'nullable',
-            'id_brand' => 'required',
+            'brand_id' => 'required',
             'discount' => 'required',
             'quantity' => 'required',
             'price' => 'required',
             'slug' => 'required|unique:products'
         ]));
-        $product->id_product_info =  $product_info->id;
+        $product->product_info_id =  $product_info->id;
          $product->save();
         
-        $id_product = $product->id;
+        $product_id = $product->id;
         if(!empty($request->colors)){
             foreach ($request->get('colors') as $key => $value) {
                 $product->attributes()->attach($value);
@@ -90,8 +90,41 @@ class ProductController extends Controller
         //
         //return $product;
         $id = $request->query('id');
-        $product = Product::with('brand','product_info','attributes','rating')->where('id',$id)->get();
-        return new ProductResource($product); //show trong mục chỉ định ProductResource
+        $product = Product::with('brand','product_info','attributes','ratings')->where('id',$id)->get();
+
+        $ratings = Rating::where('product_id', $id)->get();
+        $ratingValues = [];
+
+        foreach ($ratings as $aRating) {
+            $ratingValues[] = $aRating->star;
+        }
+        
+        if(!empty($aRating->star)){
+            
+            $ratingAverage = collect($ratingValues)->sum() / $ratings->count();
+        
+            $one_star = Rating::where('product_id', $id)->where('star', 1)->count();
+            $two_star = Rating::where('product_id', $id)->where('star', 2)->count();
+            $three_star = Rating::where('product_id', $id)->where('star', 3)->count();
+            $four_star = Rating::where('product_id', $id)->where('star', 4)->count();
+            $five_star = Rating::where('product_id', $id)->where('star', 5)->count();
+            return response()->json([
+                'data' => new ProductResource($product),
+                'star_avg' => $ratingAverage,
+                'one_star' => $one_star,
+                'two_star' => $two_star,
+                'three_star' => $three_star,
+                'four_star' => $four_star,
+                'five_star' => $five_star,
+            ], 201);
+        }else{
+           
+            return response()->json([
+                'data' => new ProductResource($product),
+            ], 201);
+        }
+       
+       
     }
 
     public function update(Request $request)
@@ -101,7 +134,7 @@ class ProductController extends Controller
         $product = Product::findOrFail($id);
        
         $product->update($request->all());
-        $product_info = Product_info::findOrFail($product->id_product_info);
+        $product_info = Product_info::findOrFail($product->product_info_id);
         $product_info->update($request->all());
         return response([
             'message' => 'Update done',

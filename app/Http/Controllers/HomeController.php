@@ -4,19 +4,17 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Resources\HomeResource;
-use App\Product;
+use App\Product, App\Attribute;
 use WithPagination;
 class HomeController extends Controller
 {
     //
-   
-    
 
     public function show_product_with_brand(Request $request)
     {
         //
         $id = $request->query('id');
-        $products = Product::where('status', '1')->with('brand')->where('id_brand', $id)->get();
+        $products = Product::where('status', '1')->with('brand')->where('brand_id', $id)->get();
         return response([
             'message' => 'Success',
             'data' => 
@@ -63,5 +61,13 @@ class HomeController extends Controller
         ], 201);
     }
 
+    public function show_color_products(Request $request){
+        $colors = Attribute::all();
+        return response([
+            'message' => 'All colors product',
+            'data' => 
+               HomeResource::collection($colors),
+        ], 201);
+    }
 
 }

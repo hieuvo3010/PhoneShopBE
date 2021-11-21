@@ -8,14 +8,14 @@ class Wishlist extends Model
 {
     //
     protected $fillable = [
-        'id_user','id_product'
+        'user_id','product_id'
     ];
 
     public function user(){
-        return $this->belongsTo('App\User','id_user');
+        return $this->belongsTo('App\User','user_id');
     }
     public function product(){
-        return $this->belongsTo('App\Product','id_product');
+        return $this->belongsTo('App\Product','product_id');
      }
 }
  

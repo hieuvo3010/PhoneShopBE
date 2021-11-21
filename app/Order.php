@@ -8,11 +8,11 @@ class Order extends Model
 {
     //
     protected $fillable = [
-        'status', 'id_user','order_code','total','coupon'
+        'status', 'user_id','order_code','total','coupon'
     ];
 
     public function user(){
-        return $this->belongsTo('App\User','id_user');
+        return $this->belongsTo('App\User','user_id');
     }
    
     public function order_detail(){
