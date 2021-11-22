@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Resources\HomeResource;
-use App\Product, App\Attribute;
+use App\Product, App\Attribute, App\Rating;
+use App\Http\Resources\Product\ProductResource;
 use WithPagination;
 class HomeController extends Controller
 {
@@ -44,15 +45,49 @@ class HomeController extends Controller
         $sort = $request->query('sort');
         
         if($sort == 'new'){
-            $products = Product::orderBy('created_at','DESC')->paginate($this->pagesize);
+            $products = Product::all();
+         
+            foreach($products as $product){
+                $ratings = Rating::where('product_id', $product->id)->get();
+                $ratingValues = [];
+
+                foreach ($ratings as $aRating) {
+                    $ratingValues[] = $aRating->star;
+                }
+                if(!empty($aRating->star)){
+            
+                    $ratingAverage = collect($ratingValues)->sum() / $ratings->count();
+                
+                    $one_star = Rating::where('product_id', $product->id)->where('star', 1)->count();
+                    $two_star = Rating::where('product_id', $product->id)->where('star', 2)->count();
+                    $three_star = Rating::where('product_id', $product->id)->where('star', 3)->count();
+                    $four_star = Rating::where('product_id', $product->id)->where('star', 4)->count();
+                    $five_star = Rating::where('product_id', $product->id)->where('star', 5)->count();
+                    return response()->json([
+                        'data' => new ProductResource($product),
+                        'star_avg' => $ratingAverage,
+                        'one_star' => $one_star,
+                        'two_star' => $two_star,
+                        'three_star' => $three_star,
+                        'four_star' => $four_star,
+                        'five_star' => $five_star,
+                    ], 201);
+                }else{
+               
+                    return response()->json([
+                        'data' => new ProductResource($product),
+                    ], 201);
+                }
+            }
+            
         }elseif($sort == 'old'){
-            $products = Product::orderBy('created_at','asc')->paginate($this->pagesize);
+            $products = Product::with('ratings')->orderBy('created_at','asc')->paginate($this->pagesize);
         }elseif($sort == 'price-desc'){
-            $products = Product::orderBy('price','DESC')->paginate($this->pagesize);
+            $products = Product::with('ratings')->orderBy('price','DESC')->paginate($this->pagesize);
         }elseif($sort == 'price-asc'){
-            $products = Product::orderBy('price','ASC')->paginate($this->pagesize);
+            $products = Product::with('ratings')->orderBy('price','ASC')->paginate($this->pagesize);
         }elseif($sort == 'price-discount'){
-            $products = Product::orderBy('discount','ASC')->paginate($this->pagesize);
+            $products = Product::with('ratings')->orderBy('discount','ASC')->paginate($this->pagesize);
         }
         return response([
             'message' => 'Success products sort',

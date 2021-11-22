@@ -67,7 +67,7 @@ class CheckoutController extends Controller
                     // $order_details->product_coupon = $cart['order_coupon'];
                     $order_details->product_fee = 0;
                     $order_details->save();
-                    $total += $order_details->product_price;
+                    $total += $order_details->product_price*$order_details->product_quantity;
                 }
                 if($request->has(['cart[order_coupon]'])){
                     // $order->total = $total - ;
