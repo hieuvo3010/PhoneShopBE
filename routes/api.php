@@ -23,7 +23,7 @@ Route::group([
     
     
     Route::apiResource('ratings', 'RatingController')->only(['store']);
-    Route::get('rating', 'RatingController@show');
+    // Route::get('rating', 'RatingController@show');
 
     Route::apiResource('wishlists', 'WishlistController')->only(['index','store']);
     Route::delete('wishlist', 'WishlistController@delete');
