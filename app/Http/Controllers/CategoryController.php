@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Brand;
 use Illuminate\Http\Request;
-use App\Http\Resources\BrandResource;
-
-class BrandController extends Controller
+use App\Category;
+use App\Http\Resources\CategoryResource;
+class CategoryController extends Controller
 {
     public function __construct() 
     {
@@ -21,8 +20,8 @@ class BrandController extends Controller
     public function index()
     {
         //
-        $bands = Brand::orderBy('id','DESC')->paginate(10);
-        return BrandResource::collection($bands);
+        $categories = Category::orderBy('id','DESC')->paginate(10);
+        return CategoryResource::collection($categories);
     }
 
     /**
@@ -34,49 +33,49 @@ class BrandController extends Controller
     public function store(Request $request)
     {
         //
-        $bands = new Brand();
-        $bands->fill($request->validate([
-            'name' => 'required|max:255|unique:brands',
+        $categories = new Category();
+        $categories->fill($request->validate([
+            'name' => 'required|max:255|unique:categories',
             'desc' => 'required',
-            'slug'  => 'required|unique:brands',
+            'slug'  => 'required|unique:categories',
         ]));
-        $bands->save();
+        $categories->save();
 
         return response([
-            'data' => new BrandResource($bands)
+            'data' => new CategoryResource($categories)
         ], 201);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Brand  $brand
+     * @param  \App\Category  $Category
      * @return \Illuminate\Http\Response
      */
     public function show(Request $request)
     {
         //
-        $slug = $request->query('slug');
-        $brand = Brand::with('product')->where('slug',$slug)->get();
-        return new BrandResource($brand);
+        $id = $request->query('slug');
+        $Category = Category::with('product')->where('slug',$slug)->get();
+        return new CategoryResource($Category);
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Brand  $brand
+     * @param  \App\Category  $Category
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request)
     {
         //
         $slug = $request->query('slug');
-        $brand = Brand::where('slug',$slug)->first();
-        $brand->update($request->all());
+        $Category = Category::where('slug',$slug)->first();
+        $Category->update($request->all());
         return response([
             'message' => 'Updated successfully',
-            'data' => new BrandResource($brand)
+            'data' => new CategoryResource($Category)
         ], 201);
     }
 
@@ -85,13 +84,12 @@ class BrandController extends Controller
     {
         //
         $slug = $request->query('slug');
-        $brand = Brand::where('slug',$slug)->first();
-        $result = $brand->destroy($brand->id);
+        $Category = Category::where('slug',$slug)->first();
+        $result = $Category->destroy($Category->id);
         if($result){
             return response([
-                'message' => 'Delete brand successfully'
+                'message' => 'Delete Category successfully'
             ], 201);
         }
     }
-
 }

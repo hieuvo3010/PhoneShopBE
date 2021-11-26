@@ -31,7 +31,7 @@ class ProductController extends Controller
     {
         //
         //$products = Product::orderBy('id','DESC')->paginate(5);
-        $products = Product::with('brand','product_info','attributes','ratings')->orderBy('id','DESC')->paginate(5);
+        $products = Product::with('category','brand','product_info','attributes','ratings')->orderBy('id','DESC')->paginate(5);
         return ProductResource::collection($products);
     }
 
@@ -56,6 +56,7 @@ class ProductController extends Controller
             'desc' => 'required',
             'image' => 'required',
             'images_product' => 'nullable',
+            'category_id' => 'required',
             'brand_id' => 'required',
             'discount' => 'required',
             'quantity' => 'required',
@@ -89,10 +90,9 @@ class ProductController extends Controller
     {
         //
         //return $product;
-        $id = $request->query('id');
-        $product = Product::with('brand','product_info','attributes','ratings')->where('id',$id)->get();
-
-        $ratings = Rating::where('product_id', $id)->get();
+        $slug = $request->query('slug');
+        $product = Product::with('brand','product_info','attributes','ratings')->where('slug',$slug)->first();
+        $ratings = Rating::where('product_id', $product->id)->get();
         $ratingValues = [];
 
         foreach ($ratings as $aRating) {
@@ -103,11 +103,11 @@ class ProductController extends Controller
             
             $ratingAverage = collect($ratingValues)->sum() / $ratings->count();
         
-            $one_star = Rating::where('product_id', $id)->where('star', 1)->count();
-            $two_star = Rating::where('product_id', $id)->where('star', 2)->count();
-            $three_star = Rating::where('product_id', $id)->where('star', 3)->count();
-            $four_star = Rating::where('product_id', $id)->where('star', 4)->count();
-            $five_star = Rating::where('product_id', $id)->where('star', 5)->count();
+            $one_star = Rating::where('product_id', $product->id)->where('star', 1)->count();
+            $two_star = Rating::where('product_id', $product->id)->where('star', 2)->count();
+            $three_star = Rating::where('product_id', $product->id)->where('star', 3)->count();
+            $four_star = Rating::where('product_id', $product->id)->where('star', 4)->count();
+            $five_star = Rating::where('product_id', $product->id)->where('star', 5)->count();
             return response()->json([
                 'data' => new ProductResource($product),
                 'star_avg' => $ratingAverage,
@@ -130,9 +130,8 @@ class ProductController extends Controller
     public function update(Request $request)
     {
         //
-        $id = $request->query('id');
-        $product = Product::findOrFail($id);
-       
+        $slug = $request->query('slug');
+        $product = Product::where('slug',$slug)->first();
         $product->update($request->all());
         $product_info = Product_info::findOrFail($product->product_info_id);
         $product_info->update($request->all());
@@ -146,10 +145,10 @@ class ProductController extends Controller
     public function delete(Request $request)
     {
         //
-        $id = $request->query('id');
-        $product = Product::findOrFail($id);
+        $slug = $request->query('slug');
+        $product = Product::where('slug',$slug)->first();
         $product->attributes()->detach();
-        $result = $product->destroy($id);
+        $result = $product->destroy($product->id);
         if($result){
             return response([
                 'message' => 'Delete product successfully'

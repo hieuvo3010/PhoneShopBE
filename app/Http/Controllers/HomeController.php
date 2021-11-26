@@ -85,4 +85,22 @@ class HomeController extends Controller
         ], 201);
     }
 
+    public function getSearchResults(Request $request) {
+        $search_product = Product::all();
+    
+        $data = $request->query('data');
+
+        $drivers = Product::with('brand','category')->where('name', 'like', "%{$data}%")
+                        ->orWhere('slug', 'like', "%{$data}%")
+                        ->get();
+        if($drivers){
+            return response([
+                'data' => $drivers
+            ]);
+        }
+        return response([
+            'data' => 'None product'
+        ]);
+    }
+
 }

@@ -31,12 +31,17 @@ Route::group([
     Route::apiResource('products', 'ProductController')->only(['index','store']);
     Route::get('product', 'ProductController@show');
     Route::put('product', 'ProductController@update');
-    Route::delete('products', 'ProductController@delete');
+    Route::delete('product', 'ProductController@delete');
+
+    Route::apiResource('categories', 'CategoryController')->only(['index','store']);
+    Route::get('category', 'CategoryController@show');
+    Route::put('category', 'CategoryController@update');
+    Route::delete('category', 'CategoryController@delete');
 
     Route::apiResource('brands', 'BrandController')->only(['index','store']);
     Route::get('brand', 'BrandController@show');
     Route::put('brand', 'BrandController@update');
-    Route::delete('brands', 'BrandController@delete');
+    Route::delete('brand', 'BrandController@delete');
 
     Route::get('home/brand/products', 'HomeController@show_product_with_brand');
     Route::get('home/products', 'HomeController@show_product');
@@ -88,6 +93,8 @@ Route::group([
 
     });
     
+// Search 
+    Route::get('/search', 'HomeController@getSearchResults')->name('search');
 // Google Sign In
     Route::post('/get-google-sign-in-url', 'GoogleController@getGoogleSignInUrl');
     Route::get('/callback', 'GoogleController@loginCallback');
