@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use App\Category, App\Product_info,App\Brand,App\Product,App\Rating;
 use App\Http\Resources\Product\ProductResource;
@@ -31,7 +31,7 @@ class ProductController extends Controller
     {
         //
         //$products = Product::orderBy('id','DESC')->paginate(5);
-        $products = Product::with('category','brand','product_info','attributes','ratings')->orderBy('id','DESC')->paginate(5);
+        $products = Product::with('brand','product_info','attributes','ratings')->orderBy('id','DESC')->paginate(5);
         return ProductResource::collection($products);
     }
 
@@ -44,40 +44,50 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         //
-        
-        $product_info = new Product_info();
-        $product_info->fill($request->all());
-        $product_info->save();
-        $product_info->id;
-        
-        $product = new Product();
-        $product->fill($request->validate([
-            'name' => 'required|max:255|unique:products',
-            'desc' => 'required',
-            'image' => 'required',
-            'images_product' => 'nullable',
-            'category_id' => 'required',
-            'brand_id' => 'required',
-            'discount' => 'required',
-            'quantity' => 'required',
-            'price' => 'required',
-            'slug' => 'required|unique:products'
-        ]));
-        $product->product_info_id =  $product_info->id;
-         $product->save();
-        
-        $product_id = $product->id;
-        if(!empty($request->colors)){
-            foreach ($request->get('colors') as $key => $value) {
-                $product->attributes()->attach($value);
-                $product->save();
+        try {
+            $product_info = new Product_info();
+            $product_info->fill($request->all());
+            $product_info->save();
+            $product_info->id;
+            
+            $product = new Product();
+            $product->fill($request->validate([
+                'name' => 'required|max:255|unique:products',
+                'desc' => 'required',
+                'image' => 'required',
+                'images_product' => 'nullable',
+                // 'category_id' => 'required',
+                'brand_id' => 'required',
+                'discount' => 'required',
+                'quantity' => 'required',
+                'price' => 'required',
+                'slug' => 'required|unique:products'
+            ]));
+            $product->product_info_id =  $product_info->id;
+            $product->save();
+            
+            $product_id = $product->id;
+            if(!empty($request->colors)){
+                foreach ($request->get('colors') as $key => $value) {
+                    $product->attributes()->attach($value);
+                    $product->save();
+                }
             }
+            return response()->json([
+                'status' => __('Create product successful'),
+                'data' => (new ProductResource($product))
+            ], Response::HTTP_CREATED);
+
+        } catch (\Exception $exception) {
+            return response()->json([
+                'status' => __('Create product failed'),
+            ], Response::HTTP_BAD_REQUEST);
         }
+        
+        
 
         
-        return response([
-            'data' => (new ProductResource($product))
-        ], 201);
+        
     }
 
     /**
@@ -154,5 +164,17 @@ class ProductController extends Controller
                 'message' => 'Delete product successfully'
             ], 201);
         }
+    }
+
+    public function related_products(Request $request){
+        $difference = 1000000;
+        $slug = $request->query('slug');
+        $product_details = Product::where('slug', $slug)->get()->first();
+        $related_products = Product::whereBetween('price',[$product_details->price,$product_details->price + $difference])
+        ->whereNotIn('id', [$product_details->id])->paginate(5);
+        return response([
+            'message' => 'Successfully',
+            'data' => new ProductResource($related_products),
+        ], 201);
     }
 }
