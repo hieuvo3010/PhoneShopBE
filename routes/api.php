@@ -21,6 +21,15 @@ Route::group([
 
 ], function ($router) {
     
+    Route::apiResource('articles', 'ArticleController')->only(['index','store']);
+    Route::get('article', 'ArticleController@show');
+    Route::put('article', 'ArticleController@update');
+    Route::delete('article', 'ArticleController@delete');
+
+    Route::apiResource('cate-articles', 'CateArticleController')->only(['index','store']);
+    Route::get('cate-article', 'CateArticleController@show');
+    Route::put('cate-article', 'CateArticleController@update');
+    Route::delete('cate-article', 'CateArticleController@delete');
     
     Route::apiResource('ratings', 'RatingController')->only(['store']);
     // Route::get('rating', 'RatingController@show');

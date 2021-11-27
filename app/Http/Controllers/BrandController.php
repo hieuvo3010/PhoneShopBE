@@ -58,7 +58,13 @@ class BrandController extends Controller
         //
         $slug = $request->query('slug');
         $brand = Brand::with('product')->where('slug',$slug)->get();
-        return new BrandResource($brand);
+        if(isset($brand)){
+            return new BrandResource($brand);
+        }else{
+            return response([
+                'message' => 'This brand does not exist'
+            ], 400);
+        }
     }
 
     /**
@@ -73,11 +79,18 @@ class BrandController extends Controller
         //
         $slug = $request->query('slug');
         $brand = Brand::where('slug',$slug)->first();
-        $brand->update($request->all());
-        return response([
-            'message' => 'Updated successfully',
-            'data' => new BrandResource($brand)
-        ], 201);
+        if(isset($brand)){
+            $brand->update($request->all());
+            return response([
+                'message' => 'Updated successfully',
+                'data' => new BrandResource($brand)
+            ], 201);
+        }else{
+            return response([
+                'message' => 'This brand does not exist'
+            ], 400);
+        }
+        
     }
 
 
