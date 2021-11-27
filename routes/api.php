@@ -26,7 +26,7 @@ Route::group([
     // Route::get('rating', 'RatingController@show');
 
     Route::apiResource('wishlists', 'WishlistController')->only(['index','store']);
-    Route::delete('wishlist', 'WishlistController@delete');
+    Route::delete('wishlist', 'WishlistController@delete_product_on_wishlist');
 
     Route::apiResource('products', 'ProductController')->only(['index','store']);
     Route::get('product', 'ProductController@show');

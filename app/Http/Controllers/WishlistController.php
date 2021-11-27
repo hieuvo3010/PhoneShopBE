@@ -63,17 +63,21 @@ class WishlistController extends Controller
         }
     }
 
-    public function delete(Request $request)
+    public function delete_product_on_wishlist(Request $request)
     {
         //
         $id = $request->query('id');
         $user = Auth::user();
-        $wishlist = Wishlist::findOrFail($id)->where('user_id',$user->id)->first();
-        $result = $wishlist->destroy($id);
-        if($result){
+        $wishlist = Wishlist::where('user_id',$user->id)->where('product_id',$id)->first();
+        if($wishlist){
+            $wishlist->destroy($id);
             return response([
                 'message' => 'Delete product on wishlist'
-            ], 201);
+            ], 200);
+        }else{
+            return response([
+                'message' => 'This product does not exist in wishlist'
+            ], 400);
         }
     }
 }
