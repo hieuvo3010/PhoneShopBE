@@ -66,11 +66,11 @@ class WishlistController extends Controller
     public function delete_product_on_wishlist(Request $request)
     {
         //
-        $id = $request->query('id');
+        $product_id = $request->query('product_id');
         $user = Auth::user();
-        $wishlist = Wishlist::where('user_id',$user->id)->where('product_id',$id)->first();
+        $wishlist = Wishlist::where('user_id',$user->id)->where('product_id',$product_id)->first();
         if($wishlist){
-            $wishlist->destroy($id);
+            $wishlist->destroy($wishlist->id);
             return response([
                 'message' => 'Delete product on wishlist'
             ], 200);

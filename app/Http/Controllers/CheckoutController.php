@@ -22,7 +22,9 @@ class CheckoutController extends Controller
             $ship->address = $data['address'];
             $ship->phone = $data['phone'];
             $ship->email = $data['email'];
-            $ship->note = $data['note'];
+            if(asset($data['note'])){
+                $ship->note = $data['note'];
+            }
             $ship->method = $data['method'];
             //$ship->fill($data);
             $ship->save();

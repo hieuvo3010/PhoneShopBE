@@ -18,6 +18,9 @@ class CreateRatingsTable extends Migration
             $table->integer('user_id');
             $table->integer('product_id');
             $table->string('content');
+            $table->string('user_name');
+            $table->string('user_image')->nullable();
+            $table->string('user_email');
             $table->integer('star');
             $table->timestamps();
         });

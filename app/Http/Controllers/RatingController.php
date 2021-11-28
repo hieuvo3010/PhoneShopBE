@@ -35,6 +35,9 @@ class RatingController extends Controller
             $rating->user_id = auth()->user()->id;
             $rating->content = $request->content;
             $rating->star = $request->star;
+            $rating->user_name = auth()->user()->name;
+            $rating->user_image = auth()->user()->image;
+            $rating->user_email = auth()->user()->email;
             $rating->save();
 
             return response([
@@ -45,41 +48,48 @@ class RatingController extends Controller
         
     }
 
-    // /**
-    //  * Display the specified resource.
-    //  *
-    //  * @param  int  $id
-    //  * @return \Illuminate\Http\Response
-    //  */
-    // public function show(Request $request)
-    // {
-    //     //
-    //     $id = $request->input('id');
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show(Request $request)
+    {
+        //
+        $id = $request->input('id');
         
-    //     $ratings = Rating::where('product_id', $id)->get();
-    //     $ratingValues = [];
+        $ratings = Rating::with('product','user')->where('product_id', $id)->get();
+        $ratingValues = [];
 
-    //     foreach ($ratings as $aRating) {
-    //         $ratingValues[] = $aRating->star;
-    //     }
+        foreach ($ratings as $aRating) {
+            $ratingValues[] = $aRating->star;
+        }
     
-    //     $ratingAverage = collect($ratingValues)->sum() / $ratings->count();
+        if(!empty($aRating->star)){
+            $ratingAverage = collect($ratingValues)->sum() / $ratings->count();
         
-    //     $one_star = Rating::where('product_id', $id)->where('star', 1)->count();
-    //     $two_star = Rating::where('product_id', $id)->where('star', 2)->count();
-    //     $three_star = Rating::where('product_id', $id)->where('star', 3)->count();
-    //     $four_star = Rating::where('product_id', $id)->where('star', 4)->count();
-    //     $five_star = Rating::where('product_id', $id)->where('star', 5)->count();
-    //     return response()->json([
-    //             'data' => RatingResource::collection($ratings),
-    //             'star_avg' => $ratingAverage,
-    //             'one_star' => $one_star,
-    //             'two_star' => $two_star,
-    //             'three_star' => $three_star,
-    //             'four_star' => $four_star,
-    //             'five_star' => $five_star,
-    //         ], 201);
-    // }
+        $one_star = Rating::where('product_id', $id)->where('star', 1)->count();
+        $two_star = Rating::where('product_id', $id)->where('star', 2)->count();
+        $three_star = Rating::where('product_id', $id)->where('star', 3)->count();
+        $four_star = Rating::where('product_id', $id)->where('star', 4)->count();
+        $five_star = Rating::where('product_id', $id)->where('star', 5)->count();
+        return response()->json([
+                'data' => RatingResource::collection($ratings),
+                'star_avg' => $ratingAverage,
+                'one_star' => $one_star,
+                'two_star' => $two_star,
+                'three_star' => $three_star,
+                'four_star' => $four_star,
+                'five_star' => $five_star,
+            ], 201);
+        }else{
+            return response()->json([
+                'data' => RatingResource::collection($ratings),
+            ], 200);
+        }
+        
+    }
 
   
 }
