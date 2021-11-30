@@ -21,38 +21,52 @@ Route::group([
 
 ], function ($router) {
     
+    // article
     Route::apiResource('articles', 'ArticleController')->only(['index','store']);
     Route::get('article', 'ArticleController@show');
     Route::put('article', 'ArticleController@update');
     Route::delete('article', 'ArticleController@delete');
 
+    // category-article
     Route::apiResource('cate-articles', 'CateArticleController')->only(['index','store']);
     Route::get('cate-article', 'CateArticleController@show');
     Route::put('cate-article', 'CateArticleController@update');
     Route::delete('cate-article', 'CateArticleController@delete');
     
+    // rating
     Route::apiResource('ratings', 'RatingController')->only(['store']);
     Route::get('rating', 'RatingController@show');
 
+    // wishlist
     Route::apiResource('wishlists', 'WishlistController')->only(['index','store']);
     Route::delete('wishlist', 'WishlistController@delete_product_on_wishlist');
 
+    // product
     Route::apiResource('products', 'ProductController')->only(['index','store']);
     Route::get('product', 'ProductController@show');
     Route::put('product', 'ProductController@update');
     Route::delete('product', 'ProductController@delete');
     Route::get('related-products', 'ProductController@related_products');
 
+    // category
     Route::apiResource('categories', 'CategoryController')->only(['index','store']);
     Route::get('category', 'CategoryController@show');
     Route::put('category', 'CategoryController@update');
     Route::delete('category', 'CategoryController@delete');
 
+    // coupon
+    Route::apiResource('coupons', 'CouponController')->only(['index','store']);
+    Route::get('coupon', 'CouponController@show');
+    Route::put('coupon', 'CouponController@update');
+    Route::delete('coupon', 'CouponController@delete');
+
+    // brand
     Route::apiResource('brands', 'BrandController')->only(['index','store']);
     Route::get('brand', 'BrandController@show');
     Route::put('brand', 'BrandController@update');
     Route::delete('brand', 'BrandController@delete');
 
+    // show public
     Route::get('home/brand/products', 'HomeController@show_product_with_brand');
     Route::get('home/products', 'HomeController@show_product');
     Route::get('home/products_between', 'HomeController@show_product_between_price');

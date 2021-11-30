@@ -31,7 +31,7 @@ class ProductController extends Controller
     {
         //
         //$products = Product::orderBy('id','DESC')->paginate(5);
-        $products = Product::with('brand','product_info','attributes','ratings')->orderBy('id','DESC')->paginate(5);
+        $products = Product::with('brand','product_info','attributes','ratings')->orderBy('id','DESC')->get();
         return ProductResource::collection($products);
     }
 
