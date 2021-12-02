@@ -102,6 +102,8 @@ Route::group([
         Route::get('/order-user-detail', 'AdminController@show_detail_order');
         Route::get('/order-user', 'AdminController@show_all_order');
 
+        Route::get('/dashboard', 'AdminController@dashboard');
+
         // manager user
         Route::get('/show_account_user', 'AdminController@show_account_user');
 

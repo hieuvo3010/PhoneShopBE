@@ -8,6 +8,7 @@ use App\Admin, App\User, App\Order, App\Order_detail, App\Ship;
 use App\Http\Resources\OrderResource,App\Http\Resources\Product\ProductResource;
 use App\Http\Resources\UserResource;
 use Validator;
+use Carbon\Carbon;
 class AdminController extends Controller
 {
     //
@@ -18,7 +19,7 @@ class AdminController extends Controller
      * @return void
      */
     public function __construct() {
-        $this->middleware('auth:admins', ['except' => ['login', 'register']]);
+        $this->middleware('auth:admins', ['except' => ['login', 'register','dashboard']]);
     }
 
     /**
@@ -193,6 +194,47 @@ class AdminController extends Controller
                 'message' => 'Delete product successfully'
             ], 201);
         }
+    }
+
+    public function dashboard(){
+        $orders = Order::orderBy('created_at','DESC')->get()->take(10);
+        $totalSales = Order::where('status',1)->count();
+        $totalRevenue = Order::where('status',1)->sum('total');
+        $todaySales = Order::where('status',1)->whereDate('created_at',Carbon::today())->count();
+        $todayRevenue = Order::where('status',1)->whereDate('created_at',Carbon::today())->sum('total');
+
+        $dauthangnay = Carbon::now('Asia/Ho_Chi_Minh')->startOfMonth()->toDateTimeString();
+        $dau_thangtruoc = Carbon::now('Asia/Ho_Chi_Minh')->subMonth()->startOfMonth()->toDateTimeString();
+        $cuoi_thangtruoc = Carbon::now('Asia/Ho_Chi_Minh')->subMonth()->endOfMonth()->toDateTimeString();
+
+        
+
+        $sub7days = Carbon::now('Asia/Ho_Chi_Minh')->subdays(7)->toDateTimeString();
+        $sub365days = Carbon::now('Asia/Ho_Chi_Minh')->subdays(365)->toDateTimeString();
+
+        $now = Carbon::now('Asia/Ho_Chi_Minh')->toDateTimeString();
+        
+        if($_GET['dashboard_value']=='7ngay'){
+            $get = Order::whereBetween('created_at',[$sub7days,$now])->orderBy('created_at','ASC')->get();
+        }elseif($_GET['dashboard_value']=='thangtruoc'){
+
+            $get = Order::whereBetween('created_at',[$dau_thangtruoc,$cuoi_thangtruoc])->orderBy('created_at','ASC')->get();
+    
+        }elseif($_GET['dashboard_value']=='thangnay'){
+    
+            $get = Order::whereBetween('created_at',[$dauthangnay,$now])->orderBy('created_at','ASC')->get();
+    
+        }else{
+            $get = Order::whereBetween('created_at',[$sub365days,$now])->orderBy('created_at','ASC')->get();
+        }
+
+        return response([
+            'orders' => new OrderResource($get),
+            'totalSales' => $totalSales,
+            'totalRevenue' => $totalRevenue,
+            'todaySales' => $todaySales,
+            'todayRevenue' => $todayRevenue,
+        ], 200);
     }
 
 }

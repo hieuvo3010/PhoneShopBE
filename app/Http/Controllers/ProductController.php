@@ -20,7 +20,7 @@ class ProductController extends Controller
     public function __construct() 
     {
         //
-        $this->middleware('auth:admins', ['except' => ['index', 'show']]);
+        $this->middleware('auth:admins', ['except' => ['index', 'show','related_products']]);
     }
     /**
      * Display a listing of the resource.
@@ -169,12 +169,20 @@ class ProductController extends Controller
     public function related_products(Request $request){
         $difference = 1000000;
         $slug = $request->query('slug');
-        $product_details = Product::where('slug', $slug)->get()->first();
-        $related_products = Product::whereBetween('price',[$product_details->price,$product_details->price + $difference])
-        ->whereNotIn('id', [$product_details->id])->paginate(5);
-        return response([
-            'message' => 'Successfully',
-            'data' => new ProductResource($related_products),
-        ], 201);
+        $product_details = Product::where('slug', $slug)->first();
+        
+        if(!empty($product_details)){
+            $related_products = Product::with('product_info')->whereBetween('price',[$product_details->price,$product_details->price + $difference])
+            ->whereNotIn('id', [$product_details->id])->paginate(5);
+            return response([
+                'message' => 'Successfully',
+                'data' => new ProductResource($related_products),
+            ], 201);
+        }else{
+            return response([
+                'message' => 'Slug not found',
+            ], 201);
+        }
+        
     }
 }
