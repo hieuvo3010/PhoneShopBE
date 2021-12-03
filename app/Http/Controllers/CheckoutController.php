@@ -20,7 +20,7 @@ class CheckoutController extends Controller
             $data =  $request->json()->all();
             // insert order_Detail
             if($data['cart']){   // check cart
-                if(!empty($request->coupon_code) || $request->coupon_code ==''){ // check coupon 
+                if(!empty($request->coupon_code) || empty($request->coupon_code =='')){ // check coupon 
                     $coupon = Coupon::where('code', $request->coupon_code)->first();
                     if($coupon){  // exist coupon
                         $ship = new Ship();  // insert ship
