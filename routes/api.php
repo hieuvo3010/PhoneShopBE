@@ -90,7 +90,7 @@ Route::group([
         Route::post('/change-pass',  'UserController@changePassWord');    
         Route::get('email/verify/{id}', 'VerificationController@verify_user')->name('verification.verify'); // Make sure to keep this as your route name
         Route::get('email/resend', 'VerificationController@resend')->name('verification.resend'); 
-        
+        Route::post('email/forgot', 'ForgotPasswordController@forgot');
         
     });
 
@@ -114,8 +114,8 @@ Route::group([
         Route::post('/refresh', 'AdminController@refresh');
         Route::get('/user-profile', 'AdminController@userProfile');
         Route::post('/change-pass',  'AdminController@changePassWord');    
-        Route::get('email/verify/{id}', 'VerificationController@verify_admin')->name('verification.verify_admin'); // Make sure to keep this as your route name
-        Route::get('email/resend', 'VerificationController@resend')->name('verification.resend');
+        // Route::get('email/verify/{id}', 'VerificationController@verify_admin')->name('verification.verify_admin'); // Make sure to keep this as your route name
+        // Route::get('email/resend', 'VerificationController@resend')->name('verification.resend');
 
     });
     

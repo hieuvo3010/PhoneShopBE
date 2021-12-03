@@ -42,9 +42,9 @@ class UserController extends Controller
             return response()->json(['error' => 'Unauthorized'], 401);
         }
          
-        // if (! auth()->user()->hasVerifiedEmail()) {
-        //     return response()->json(['error' => 'Please verify your email address before logging in. You may request a new link here xyz.com if your verification has expired.'], 401);
-        // }
+        if (! auth()->user()->hasVerifiedEmail()) {
+            return response()->json(['error' => 'Please verify your email address before logging in. You may request a new link here xyz.com if your verification has expired.'], 401);
+        }
 
 
         return $this->createNewToken($token);
@@ -68,12 +68,16 @@ class UserController extends Controller
         $user = User::create(array_merge(
                     $validator->validated(),
                     ['password' => bcrypt($request->password)]
-        ));//->sendEmailVerificationNotification();
+        ))->sendEmailVerificationNotification();
                 //->sendEmailVerificationNotification()
         
+        if (! $token = auth()->attempt($validator->validated())) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+        $token = $this->createNewToken($token);
         return response()->json([
             'message' => 'User successfully registered',
-            'user' => $user
+            'token' => $token
         ], 201);
     }
 
@@ -206,4 +210,6 @@ class UserController extends Controller
             'data' => new OrderResource($orders)
         ], 201);
     }
+
+    
 }

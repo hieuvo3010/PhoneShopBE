@@ -22,18 +22,18 @@ class VerificationController extends Controller
         return response()->json($user);
     }
 
-    public function verify_admin($id, Request $request) {
-        if (!$request->hasValidSignature()) {
-            return response()->json(["msg" => "Invalid/Expired url provided."], 401);
-        }
+    // public function verify_admin($id, Request $request) {
+    //     if (!$request->hasValidSignature()) {
+    //         return response()->json(["msg" => "Invalid/Expired url provided."], 401);
+    //     }
     
-        $admin = Admin::findOrFail($id);
+    //     $admin = Admin::findOrFail($id);
     
-        if (!$admin->hasVerifiedEmail()) {
-            $admin->markEmailAsVerified();
-        }
-        return response()->json($admin);
-    }
+    //     if (!$admin->hasVerifiedEmail()) {
+    //         $admin->markEmailAsVerified();
+    //     }
+    //     return response()->json($admin);
+    // }
 
     
     public function resend() {
