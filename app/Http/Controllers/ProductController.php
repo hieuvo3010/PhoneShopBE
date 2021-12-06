@@ -7,16 +7,7 @@ use App\Category, App\Product_info,App\Brand,App\Product,App\Rating;
 use App\Http\Resources\Product\ProductResource;
 class ProductController extends Controller
 {
-    // public $attr;
-    // public $inputs= [];
-    // public $attributes_arr = [];
-    // public $attributes_value;
-
-    // public function add(){
-    //     if(!in_array($this->attr,$this->attributes_arr)){
-    //         array_push($this->attributes_arr,$this->attr);
-    //     }
-    // }
+    
     public function __construct() 
     {
         //
@@ -31,7 +22,7 @@ class ProductController extends Controller
     {
         //
         //$products = Product::orderBy('id','DESC')->paginate(5);
-        $products = Product::with('brand','product_info','attributes','ratings')->orderBy('id','DESC')->get();
+        $products = Product::with('brand','product_info','attributes','category')->orderBy('id','DESC')->get();
         return ProductResource::collection($products);
     }
 
@@ -56,7 +47,7 @@ class ProductController extends Controller
                 'desc' => 'required',
                 'image' => 'required',
                 'images_product' => 'nullable',
-                // 'category_id' => 'required',
+                'category_id' => 'nullable',
                 'brand_id' => 'required',
                 'discount' => 'required',
                 'quantity' => 'required',
@@ -102,6 +93,12 @@ class ProductController extends Controller
         //return $product;
         $slug = $request->query('slug');
         $product = Product::with('brand','product_info','attributes','ratings')->where('slug',$slug)->first();
+
+        $check = 0;
+        if(asset($product->category_id)){
+            $product_relevant = Product::with('brand','product_info','attributes','ratings')->where('category_id',$product->category_id)->get();
+            $check = 1;
+        }
         $ratings = Rating::where('product_id', $product->id)->get();
         $ratingValues = [];
 
@@ -118,20 +115,38 @@ class ProductController extends Controller
             $three_star = Rating::where('product_id', $product->id)->where('star', 3)->count();
             $four_star = Rating::where('product_id', $product->id)->where('star', 4)->count();
             $five_star = Rating::where('product_id', $product->id)->where('star', 5)->count();
-            return response()->json([
-                'data' => new ProductResource($product),
-                'star_avg' => $ratingAverage,
-                'one_star' => $one_star,
-                'two_star' => $two_star,
-                'three_star' => $three_star,
-                'four_star' => $four_star,
-                'five_star' => $five_star,
-            ], 201);
-        }else{
+            if($check = 0){
+                return response()->json([
+                    'data' => new ProductResource($product),
+                    'star_avg' => $ratingAverage,
+                    'one_star' => $one_star,
+                    'two_star' => $two_star,
+                    'three_star' => $three_star,
+                    'four_star' => $four_star,
+                    'five_star' => $five_star,
+                ], 201);
+            }else{
+                return response()->json([
+                    'data' => new ProductResource($product_relevant),
+                    'star_avg' => $ratingAverage,
+                    'one_star' => $one_star,
+                    'two_star' => $two_star,
+                    'three_star' => $three_star,
+                    'four_star' => $four_star,
+                    'five_star' => $five_star,
+                ], 201);
+            }
            
+        }else{
+            if($check = 0){
             return response()->json([
                 'data' => new ProductResource($product),
             ], 201);
+            }else{
+                return response()->json([
+                    'data' => new ProductResource($product_relevant),
+                ], 201);
+            }
         }
        
        

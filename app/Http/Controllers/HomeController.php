@@ -92,7 +92,7 @@ class HomeController extends Controller
 
         $drivers = Product::with('brand','product_info','attributes','ratings')->where('name', 'like', "%{$data}%")
                         ->orWhere('slug', 'like', "%{$data}%")
-                        ->get();
+                        ->paginate(10);
         if($drivers){
             return response([
                 'data' => $drivers
