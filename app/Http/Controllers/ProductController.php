@@ -160,6 +160,13 @@ class ProductController extends Controller
         $product->update($request->all());
         $product_info = Product_info::findOrFail($product->product_info_id);
         $product_info->update($request->all());
+        if(!empty($request->colors)){
+            $product->attributes()->detach(); // delete all color
+            foreach ($request->get('colors') as $key => $value) {
+                $product->attributes()->attach($value);
+                $product->save();
+            }
+        }
         return response([
             'message' => 'Update done',
             'data' => new ProductResource($product)
