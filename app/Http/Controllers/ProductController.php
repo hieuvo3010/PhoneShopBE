@@ -156,7 +156,7 @@ class ProductController extends Controller
     {
         //
         $slug = $request->query('slug');
-        $product = Product::where('slug',$slug)->first();
+        $product = Product::with('brand','product_info','attributes','category')->where('slug',$slug)->first();
         $product->update($request->all());
         $product_info = Product_info::findOrFail($product->product_info_id);
         $product_info->update($request->all());
