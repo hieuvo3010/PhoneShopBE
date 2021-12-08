@@ -47,7 +47,7 @@ Route::group([
     Route::put('product', 'ProductController@update');
     Route::delete('product', 'ProductController@delete');
     Route::get('related-products', 'ProductController@related_products');
-    Route::get('type_product', 'ProductController@type_product');
+    Route::get('type-products', 'ProductController@type_product');
 
     // category
     Route::apiResource('categories', 'CategoryController')->only(['index','store']);
