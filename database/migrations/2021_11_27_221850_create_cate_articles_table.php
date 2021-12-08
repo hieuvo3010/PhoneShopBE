@@ -14,7 +14,7 @@ class CreateCateArticlesTable extends Migration
     public function up()
     {
         Schema::create('cate_articles', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->increments('id');
             $table->string('name');
             $table->string('slug');
             $table->text('desc');

@@ -14,7 +14,7 @@ class CreateProductInfosTable extends Migration
     public function up()
     {
         Schema::create('product_infos', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->increments('id');
             $table->string('screen');
             $table->string('rear_camera');
             $table->string('selfie_camera');
