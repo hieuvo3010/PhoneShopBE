@@ -194,7 +194,7 @@ class UserController extends Controller
         $userId = auth()->user()->id;
         $order_code = $request->query('order_code');
         $order= Order::with('order_detail')->where('user_id', $userId)->where('order_code', $order_code)->first();
-        $products_with_order = Order_detail::with('ship')->where('order_code', $order->order_code)->get();
+        $products_with_order = Order_detail::with('ship','order')->where('order_code', $order->order_code)->get();
         
         return response()->json([
             'message' => 'Detail order '.$order->order_code ,
@@ -211,5 +211,18 @@ class UserController extends Controller
         ], 201);
     }
 
-    
+    public function delete_order(Request $request){
+        $order_code = $request->query('order_code');
+        $order= Order::where('order_code', $order_code)->first();
+        if($order->status == 2 || $order->status == 3){
+            return response([
+                'message' => 'Order has been shipped or completed',
+            ], 400);
+        }else{
+            $order->destroy($order->id);
+            return response([
+                'message' => 'Delete order successfully'
+            ], 200);
+        }
+    }
 }

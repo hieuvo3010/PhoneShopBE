@@ -182,7 +182,7 @@ class AdminController extends Controller
         return response([
             'message' => 'Update status order successfully',
             'data' => new OrderResource($order)
-        ], 201);
+        ], 200);
     }
 
     public function delete_order(Request $request){
@@ -191,17 +191,17 @@ class AdminController extends Controller
         $result = $order->destroy($order->id);
         if($result){
             return response([
-                'message' => 'Delete product successfully'
-            ], 201);
+                'message' => 'Delete order successfully'
+            ], 200);
         }
     }
 
     public function dashboard(){
-        $orders = Order::orderBy('created_at','DESC')->get()->take(10);
-        $totalSales = Order::where('status',1)->count();
-        $totalRevenue = Order::where('status',1)->sum('total');
-        $todaySales = Order::where('status',1)->whereDate('created_at',Carbon::today())->count();
-        $todayRevenue = Order::where('status',1)->whereDate('created_at',Carbon::today())->sum('total');
+        $orders = Order::orderBy('created_at','DESC')->paginate(10);
+        $totalSales = Order::where('status',3)->count();
+        $totalRevenue = Order::where('status',3)->sum('total');
+        $todaySales = Order::where('status',3)->whereDate('created_at',Carbon::today())->count();
+        $todayRevenue = Order::where('status',3)->whereDate('created_at',Carbon::today())->sum('total');
 
         $dauthangnay = Carbon::now('Asia/Ho_Chi_Minh')->startOfMonth()->toDateTimeString();
         $dau_thangtruoc = Carbon::now('Asia/Ho_Chi_Minh')->subMonth()->startOfMonth()->toDateTimeString();

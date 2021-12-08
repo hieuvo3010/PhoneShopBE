@@ -78,7 +78,7 @@ Route::group([
         Route::get('/order-detail', 'UserController@show_order_detail');
         Route::get('/order', 'UserController@show_all_order');
         Route::post('/confirm-order', 'CheckoutController@confirm_order');
-
+        Route::delete('/delete-order', 'UserController@delete_order');
 
         // account
         Route::post('/login', 'UserController@login');

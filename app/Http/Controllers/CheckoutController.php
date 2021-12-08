@@ -118,7 +118,7 @@ class CheckoutController extends Controller
                                 'phone' => $data['phone'],
                                 'address' => $data['address'],
                                 'note' => $data['note'],
-                                'method' => $data['method']
+                                'method' => $ship->method
                             );
                         
                         //lay ma giam gia, lay coupon code
@@ -234,9 +234,8 @@ class CheckoutController extends Controller
                                 'phone' => $data['phone'],
                                 'address' => $data['address'],
                                 'note' => $data['note'],
-                                'method' => $data['method']
+                                'method' => $ship->method
                             );
-                        
                         //lay ma giam gia, lay coupon code
                         $ordercode_mail = array(
                             'coupon_code' => $order->coupon,

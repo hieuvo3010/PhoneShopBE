@@ -20,7 +20,7 @@ class CreateShipsTable extends Migration
             $table->string('phone');
             $table->string('email');
             $table->string('note')->nullable();
-            $table->string('method');
+            $table->integer('method');
             $table->timestamps();
         });
     }

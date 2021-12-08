@@ -78,10 +78,10 @@
 						@endif
 					</p>	
 					<p>Hình thức thanh toán : <strong style="text-transform: uppercase;color:#fff">
-						@if($shipping_array['method']==0)
+						@if($shipping_array['method']==1)
 							Tiền mặt
 						@else
-							Chuyển khoản ATM
+							Online - VNPAY
 						@endif
 					
 					</strong></p>
