@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Resources\HomeResource;
-use App\Product, App\Attribute, App\Brand;
+use App\Product, App\Attribute, App\Brand, App\Article, App\CateArticle;
 use WithPagination;
 use Illuminate\Pagination\LengthAwarePaginator;
 class HomeController extends Controller
@@ -103,4 +103,18 @@ class HomeController extends Controller
         ]);
     }
 
+    public function get_articles_by_cate(Request $request){
+        try{
+            $data = $request->query('slug');
+            $cateArticle = CateArticle::where('slug',$data)->first();
+            $articles = Article::where('cate_article_id',$cateArticle->id)->get();
+            return response([
+                'data' => HomeResource::collection($articles),
+            ]);
+        } catch (\Exception $exception) {
+            return response()->json([
+                'status' => __('Category Article slug does not exist'),
+            ], 400);
+        }
+    }
 }

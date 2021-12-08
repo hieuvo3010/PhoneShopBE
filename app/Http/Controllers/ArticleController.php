@@ -21,7 +21,7 @@ class ArticleController extends Controller
     public function index()
     {
         //
-        $Articles = Article::with('cate_article')->orderBy('id','DESC')->paginate(10);
+        $Articles = Article::with('cate_article')->orderBy('id','DESC')->get();
         return ArticleResource::collection($Articles);
     }
 

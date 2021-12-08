@@ -17,7 +17,7 @@ class CreateCateArticlesTable extends Migration
             $table->bigIncrements('id');
             $table->string('name');
             $table->string('slug');
-            $table->string('desc');
+            $table->text('desc');
             $table->string('status')->default('1');
             $table->timestamps();
         });

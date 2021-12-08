@@ -47,6 +47,7 @@ Route::group([
     Route::put('product', 'ProductController@update');
     Route::delete('product', 'ProductController@delete');
     Route::get('related-products', 'ProductController@related_products');
+    Route::get('type_product', 'ProductController@type_product');
 
     // category
     Route::apiResource('categories', 'CategoryController')->only(['index','store']);
@@ -67,10 +68,9 @@ Route::group([
     Route::delete('brand', 'BrandController@delete');
 
     // show public
-    Route::get('home/brand/products', 'HomeController@show_product_with_brand');
-    Route::get('home/products', 'HomeController@show_product');
-    Route::get('home/products_between', 'HomeController@show_product_between_price');
+    Route::get('products/filter', 'HomeController@show_product');
     Route::get('colors-product', 'HomeController@show_color_products');
+    Route::get('cate/articles', 'HomeController@get_articles_by_cate');
 
     Route::group(['prefix' => 'user','middleware' => ['assign.guard:users']],function ()
     {

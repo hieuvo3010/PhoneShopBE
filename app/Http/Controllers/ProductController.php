@@ -11,7 +11,7 @@ class ProductController extends Controller
     public function __construct() 
     {
         //
-        $this->middleware('auth:admins', ['except' => ['index', 'show','related_products']]);
+        $this->middleware('auth:admins', ['except' => ['index', 'show','related_products','type_product']]);
     }
     /**
      * Display a listing of the resource.
@@ -44,6 +44,7 @@ class ProductController extends Controller
             $product = new Product();
             $product->fill($request->validate([
                 'name' => 'required|max:255|unique:products',
+                'type' => 'nullable',
                 'desc' => 'required',
                 'image' => 'required',
                 'images_product' => 'nullable',
@@ -74,11 +75,6 @@ class ProductController extends Controller
                 'status' => __('Create product failed'),
             ], Response::HTTP_BAD_REQUEST);
         }
-        
-        
-
-        
-        
     }
 
     /**
@@ -90,32 +86,25 @@ class ProductController extends Controller
     public function show(Request $request)
     {
         //
-        //return $product;
-        $slug = $request->query('slug');
-        $product = Product::with('brand','product_info','attributes','ratings')->where('slug',$slug)->first();
+        try {
+            $slug = $request->query('slug');
+            $product = Product::with('brand','product_info','attributes','ratings')->where('slug',$slug)->first();
+            $ratings = Rating::where('product_id', $product->id)->get();
+            $ratingValues = [];
 
-        $check = 0;
-        if(asset($product->category_id)){
-            $product_relevant = Product::with('brand','product_info','attributes','ratings')->where('category_id',$product->category_id)->get();
-            $check = 1;
-        }
-        $ratings = Rating::where('product_id', $product->id)->get();
-        $ratingValues = [];
-
-        foreach ($ratings as $aRating) {
-            $ratingValues[] = $aRating->star;
-        }
-        
-        if(!empty($aRating->star)){
+            foreach ($ratings as $aRating) {
+                $ratingValues[] = $aRating->star;
+            }
             
-            $ratingAverage = collect($ratingValues)->sum() / $ratings->count();
-        
-            $one_star = Rating::where('product_id', $product->id)->where('star', 1)->count();
-            $two_star = Rating::where('product_id', $product->id)->where('star', 2)->count();
-            $three_star = Rating::where('product_id', $product->id)->where('star', 3)->count();
-            $four_star = Rating::where('product_id', $product->id)->where('star', 4)->count();
-            $five_star = Rating::where('product_id', $product->id)->where('star', 5)->count();
-            if($check = 0){
+            if(!empty($aRating->star)){
+                
+                $ratingAverage = collect($ratingValues)->sum() / $ratings->count();
+            
+                $one_star = Rating::where('product_id', $product->id)->where('star', 1)->count();
+                $two_star = Rating::where('product_id', $product->id)->where('star', 2)->count();
+                $three_star = Rating::where('product_id', $product->id)->where('star', 3)->count();
+                $four_star = Rating::where('product_id', $product->id)->where('star', 4)->count();
+                $five_star = Rating::where('product_id', $product->id)->where('star', 5)->count();
                 return response()->json([
                     'data' => new ProductResource($product),
                     'star_avg' => $ratingAverage,
@@ -126,37 +115,24 @@ class ProductController extends Controller
                     'five_star' => $five_star,
                 ], 201);
             }else{
+            
                 return response()->json([
-                    'data' => new ProductResource($product_relevant),
-                    'star_avg' => $ratingAverage,
-                    'one_star' => $one_star,
-                    'two_star' => $two_star,
-                    'three_star' => $three_star,
-                    'four_star' => $four_star,
-                    'five_star' => $five_star,
-                ], 201);
+                    'data' => new ProductResource($product),
+                ], 200);
             }
-           
-        }else{
-            if($check = 0){
+
+        } catch (\Exception $exception) {
             return response()->json([
-                'data' => new ProductResource($product),
-            ], 201);
-            }else{
-                return response()->json([
-                    'data' => new ProductResource($product_relevant),
-                ], 201);
-            }
+                'status' => __('Product slug does not exist'),
+            ], Response::HTTP_BAD_REQUEST);
         }
-       
-       
     }
 
     public function update(Request $request)
     {
         //
         $slug = $request->query('slug');
-        $product = Product::with('brand','product_info','attributes','category')->where('slug',$slug)->first();
+        $product = Product::where('slug',$slug)->first();
         $product->update($request->all());
         $product_info = Product_info::findOrFail($product->product_info_id);
         $product_info->update($request->all());
@@ -194,17 +170,33 @@ class ProductController extends Controller
         $product_details = Product::where('slug', $slug)->first();
         
         if(!empty($product_details)){
-            $related_products = Product::with('product_info')->whereBetween('price',[$product_details->price,$product_details->price + $difference])
+            $related_products = Product::with('product_info')
+            ->whereBetween('price',[$product_details->price,$product_details->price + $difference])
             ->whereNotIn('id', [$product_details->id])->paginate(5);
             return response([
                 'message' => 'Successfully',
                 'data' => new ProductResource($related_products),
-            ], 201);
+            ], 200);
         }else{
             return response([
                 'message' => 'Slug not found',
-            ], 201);
+            ], 400);
         }
-        
+    }
+
+    public function type_product(Request $request){
+        try{
+            $slug = $request->query('slug');
+            $product_details = Product::where('slug', $slug)->first();
+            $product = Product::where('type',$product_details->type)->get();
+            return response([
+                'message' => 'Successfully',
+                'data' => new ProductResource($product),
+            ], 200);
+        } catch (\Exception $exception) {
+            return response()->json([
+                'status' => __('Product slug does not exist'),
+            ], 400);
+        }
     }
 }

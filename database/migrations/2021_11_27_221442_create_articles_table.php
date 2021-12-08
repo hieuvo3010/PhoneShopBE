@@ -17,7 +17,7 @@ class CreateArticlesTable extends Migration
             $table->bigIncrements('id');
             $table->string('name');
             $table->string('image');
-            $table->string('desc');
+            $table->text('desc');
             $table->string('status')->default('1');
             $table->string('slug');
             $table->integer('cate_article_id');
