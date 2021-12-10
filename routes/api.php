@@ -16,10 +16,15 @@ use Illuminate\Http\Request;
 
 Route::group([
     'middleware' => 'api',
-    // 'prefix' => 'auth',
-   
 
 ], function ($router) {
+
+    // Search 
+    Route::get('/search', 'HomeController@getSearchResults')->name('search');
+    
+    // Google Sign In
+    Route::post('/get-google-sign-in-url', 'GoogleController@getGoogleSignInUrl');
+    Route::get('/callback', 'GoogleController@loginCallback');
     
     // article
     Route::apiResource('articles', 'ArticleController')->only(['index','store']);
@@ -119,9 +124,5 @@ Route::group([
 
     });
     
-// Search 
-    Route::get('/search', 'HomeController@getSearchResults')->name('search');
-// Google Sign In
-    Route::post('/get-google-sign-in-url', 'GoogleController@getGoogleSignInUrl');
-    Route::get('/callback', 'GoogleController@loginCallback');
+
 });
