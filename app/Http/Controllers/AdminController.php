@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Admin, App\User, App\Order, App\Order_detail, App\Ship;
+use App\Admin, App\User, App\Order, App\Order_detail, App\Ship, App\Product;
 use App\Http\Resources\OrderResource,App\Http\Resources\Product\ProductResource;
 use App\Http\Resources\UserResource;
 use Validator;
@@ -19,7 +19,7 @@ class AdminController extends Controller
      * @return void
      */
     public function __construct() {
-        $this->middleware('auth:admins', ['except' => ['login', 'register','dashboard']]);
+        $this->middleware('auth:admins', ['except' => ['login', 'register']]);
     }
 
     /**
@@ -175,10 +175,21 @@ class AdminController extends Controller
     public function update_order(Request $request){
         $order_code = $request->query('order_code');
         $order= Order::where('order_code', $order_code)->first();
-        $order->fill($request->validate([
+        $data = $request->validate([
             'status' => 'required'
-        ]));
-        $order->save();
+        ]);
+        $order->update($data);
+        if($order->status == 2){
+            $order_d = Order_detail::where('order_code', $order_code)->get();
+            foreach($order_d as $value) {
+                $product = Product::find($value->product_id);
+                $updateDetails = [
+                    'quantity' => $product->quantity - $value->product_quantity,
+                    'sold' => $product->sold + $value->product_quantity
+                ];
+                $product->update($updateDetails);
+            }
+        }
         return response([
             'message' => 'Update status order successfully',
             'data' => new OrderResource($order)
@@ -197,6 +208,14 @@ class AdminController extends Controller
     }
 
     public function dashboard(){
+        $totalProduct = 0;
+        $totalProductSold = 0;
+        $products = Product::all();
+
+        foreach($products as $product) {
+            $totalProduct += $product->quantity;
+            $totalProductSold += $product->sold;
+        }
         $orders = Order::orderBy('created_at','DESC')->paginate(10);
         $totalSales = Order::where('status',3)->count();
         $totalRevenue = Order::where('status',3)->sum('total');
@@ -229,6 +248,8 @@ class AdminController extends Controller
         }
 
         return response([
+            'totalProduct' => $totalProduct,
+            'totalProductSold' => $totalProductSold,
             'orders' => new OrderResource($get),
             'totalSales' => $totalSales,
             'totalRevenue' => $totalRevenue,

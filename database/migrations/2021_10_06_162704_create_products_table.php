@@ -28,6 +28,7 @@ class CreateProductsTable extends Migration
             $table->string('image');
             $table->json('images_product')->nullable();
             $table->integer('status')->default(1);
+            $table->integer('sold')->default(0);
             $table->timestamps();
         });
     }

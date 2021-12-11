@@ -59,8 +59,8 @@ class CheckoutController extends Controller
                                 }
                             }
                             $order_details->product_image = $product->image;
-                            $order_details->product_name = $product->name;
-                            if($product->discount){
+                            $order_details->product_discount = $product->discount;
+                            if($product->discount != 0){
                                 $order_details->product_price = round($product->price - (($product->price*$product->discount)/100)) ;
                             }else{
                                 $order_details->product_price = $product->price;
@@ -160,7 +160,8 @@ class CheckoutController extends Controller
                             }
                             $order_details->product_image = $product->image;
                             $order_details->product_name = $product->name;
-                            if($product->discount){
+                            $order_details->product_discount = $product->discount;
+                            if($product->discount != 0){
                                 $order_details->product_price = round($product->price - (($product->price*$product->discount)/100)) ;
                             }else{
                                 $order_details->product_price = $product->price;
