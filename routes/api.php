@@ -19,6 +19,7 @@ Route::group([
 
 ], function ($router) {
 
+    
     // Search 
     Route::get('/search', 'HomeController@getSearchResults')->name('search');
     
@@ -95,8 +96,10 @@ Route::group([
         Route::post('/change-pass',  'UserController@changePassWord');    
         Route::get('email/verify/{id}', 'VerificationController@verify_user')->name('verification.verify'); // Make sure to keep this as your route name
         Route::get('email/resend', 'VerificationController@resend')->name('verification.resend'); 
-        Route::post('email/forgot', 'ForgotPasswordController@forgot');
-        
+
+        Route::post('reset-password', 'ResetPasswordController@sendMail');
+        Route::put('reset-password', 'ResetPasswordController@reset');
+
     });
 
     Route::group(['prefix' => 'admin','middleware' => ['assign.guard:admins']],function ()

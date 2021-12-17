@@ -77,7 +77,7 @@ class UserController extends Controller
         $token = $this->createNewToken($token);
         return response()->json([
             'message' => 'User successfully registered',
-            // 'token' => $token
+            'token' => $token
         ], 201);
     }
 
