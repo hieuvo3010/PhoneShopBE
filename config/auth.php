@@ -44,6 +44,7 @@ return [
         'api' => [
             'driver' => 'jwt',
             'provider' => 'users',
+            // 'model' => App\User::class,
             'hash' => false,
         ],
         'admins' => [

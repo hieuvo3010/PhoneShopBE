@@ -25,7 +25,11 @@ Route::group([
     
     // Google Sign In
     Route::post('/get-google-sign-in-url', 'GoogleController@getGoogleSignInUrl');
-    Route::get('/callback', 'GoogleController@loginCallback');
+    Route::get('/google/callback', 'GoogleController@loginCallback');
+
+    // facebook Sign In
+    Route::post('/get-facebook-sign-in-url', 'FacebookController@getFacebookSignInUrl');
+    Route::get('/facebook/callback', 'FacebookController@loginCallback');
     
     // article
     Route::apiResource('articles', 'ArticleController')->only(['index','store']);
