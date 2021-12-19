@@ -38,16 +38,24 @@ class GoogleController extends Controller
             if ($user) {
                 $token = JWTAuth::fromUser($user);
             }else{
-                $user = User::create(
-                    [
-                        'email' => $googleUser->email,
-                        'name' => $googleUser->name,
-                        'image' => $googleUser->avatar,
-                        'google_id'=> $googleUser->id,
-                        'email_verified_at' => Carbon::now()->timestamp,
-                        'password'=>  bcrypt('123456'),
-                    ]
-                );
+                $user = new User();
+                $user->email = $googleUser->email;
+                $user->name = $googleUser->name;
+                $user->image = $googleUser->avatar;
+                $user->google_id = $googleUser->id;
+                $user->email_verified_at = now()->timestamp;
+                $user->password = bcrypt('123456');
+                $user->save();
+                // $user = User::create(
+                //     [
+                //         'email' => $googleUser->email,
+                //         'name' => $googleUser->name,
+                //         'image' => $googleUser->avatar,
+                //         'google_id'=> $googleUser->id,
+                //         'email_verified_at' => now()->timestamp,
+                //         'password'=>  bcrypt('123456'),
+                //     ]
+                // );
                 $token = JWTAuth::fromUser($user);
             }
          
