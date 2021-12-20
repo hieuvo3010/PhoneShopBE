@@ -108,6 +108,9 @@ Route::group([
 
     Route::group(['prefix' => 'admin','middleware' => ['assign.guard:admins']],function ()
     {
+        // search brand, category and
+        Route::get('/{type}/search', 'AdminController@search');
+
         // manager order
         Route::delete('/delete-order', 'AdminController@delete_order')->name('delete-order');
         Route::post('/update-order', 'AdminController@update_order')->name('update-order');

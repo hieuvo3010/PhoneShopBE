@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Admin, App\User, App\Order, App\Order_detail, App\Ship, App\Product;
+use App\Admin, App\User, App\Order, 
+App\Order_detail, App\Ship, App\Product, App\Article, 
+App\Category, App\Brand, App\Coupon, App\CateArticle;
 use App\Http\Resources\OrderResource,App\Http\Resources\Product\ProductResource;
 use App\Http\Resources\UserResource;
 use Validator;
@@ -228,21 +230,20 @@ class AdminController extends Controller
 
         
 
-        $sub7days = Carbon::now('Asia/Ho_Chi_Minh')->subdays(7)->toDateTimeString();
-        $sub365days = Carbon::now('Asia/Ho_Chi_Minh')->subdays(365)->toDateTimeString();
+        $sub7days = Carbon::now('Asia/Ho_Chi_Minh')->subDays(7)->toDateTimeString();
+        $sub1days = Carbon::now('Asia/Ho_Chi_Minh')->subDay()->toDateTimeString();
+        $sub365days = Carbon::now('Asia/Ho_Chi_Minh')->subDays(365)->toDateTimeString();
 
         $now = Carbon::now('Asia/Ho_Chi_Minh')->toDateTimeString();
         
-        if($_GET['dashboard_value']=='7ngay'){
-            $get = Order::whereBetween('created_at',[$sub7days,$now])->orderBy('created_at','ASC')->get();
-        }elseif($_GET['dashboard_value']=='thangtruoc'){
-
+        if($_GET['dashboard_value']=='week'){
+            $get = Order::whereBetween('created_at',[$sub1days,$now])->orderBy('created_at','ASC')->get();
+        }elseif($_GET['dashboard_value']=='today'){
             $get = Order::whereBetween('created_at',[$dau_thangtruoc,$cuoi_thangtruoc])->orderBy('created_at','ASC')->get();
-    
-        }elseif($_GET['dashboard_value']=='thangnay'){
-    
+        }elseif($_GET['dashboard_value']=='last-month'){
+            $get = Order::whereBetween('created_at',[$dau_thangtruoc,$cuoi_thangtruoc])->orderBy('created_at','ASC')->get();
+        }elseif($_GET['dashboard_value']=='month'){
             $get = Order::whereBetween('created_at',[$dauthangnay,$now])->orderBy('created_at','ASC')->get();
-    
         }else{
             $get = Order::whereBetween('created_at',[$sub365days,$now])->orderBy('created_at','ASC')->get();
         }
@@ -256,6 +257,119 @@ class AdminController extends Controller
             'todaySales' => $todaySales,
             'todayRevenue' => $todayRevenue,
         ], 200);
+    }
+
+    public function search(Request $request, $type){
+        $data = $request->query('data');
+        switch ($type) {
+            case "categories":
+                $drivers = Category::where('name', 'like', "%{$data}%")
+                ->orWhere('slug', 'like', "%{$data}%")
+                ->paginate(10);
+                if($drivers){
+                    return response([
+                        'data' => $drivers
+                    ]);
+                }
+                return response([
+                    'data' => 'None category'
+                ]);
+              break;
+            case "brands":
+                $drivers = Brand::where('name', 'like', "%{$data}%")
+                ->orWhere('slug', 'like', "%{$data}%")
+                ->paginate(10);
+                if($drivers){
+                    return response([
+                        'data' => $drivers
+                    ]);
+                }
+                return response([
+                    'data' => 'None brands'
+                ]);
+              break;
+            case "coupons":
+                $drivers = Coupon::where('name', 'like', "%{$data}%")
+                ->orWhere('code', 'like', "%{$data}%")
+                ->paginate(10);
+                if($drivers){
+                    return response([
+                        'data' => $drivers
+                    ]);
+                }
+                return response([
+                    'data' => 'None coupons'
+                ]);
+              break;
+            case "products":
+                $drivers = Product::where('name', 'like', "%{$data}%")
+                ->orWhere('slug', 'like', "%{$data}%")
+                ->paginate(10);
+                if($drivers){
+                    return response([
+                        'data' => $drivers
+                    ]);
+                }
+                return response([
+                    'data' => 'None coupons'
+                ]);
+              break;
+            case "orders":
+                $drivers = Order::where('order_code', 'like', "%{$data}%")
+                ->paginate(10);
+                if($drivers){
+                    return response([
+                        'data' => $drivers
+                    ]);
+                }
+                return response([
+                    'data' => 'None orders'
+                ]);
+              break;
+            case "users":
+                $drivers = User::where('name', 'like', "%{$data}%")
+                ->orWhere('email', 'like', "%{$data}%")
+                ->paginate(10);
+                if($drivers){
+                    return response([
+                        'data' => $drivers
+                    ]);
+                }
+                return response([
+                    'data' => 'None users'
+                ]);
+             break;
+            case "category-aticles":
+                $drivers = CateArticle::where('name', 'like', "%{$data}%")
+                ->orWhere('slug', 'like', "%{$data}%")
+                ->paginate(10);
+                if($drivers){
+                    return response([
+                        'data' => $drivers
+                    ]);
+                }
+                return response([
+                    'data' => 'None category-caticles'
+                ]);
+              break;  
+            case "articles":
+                $drivers = CateArticle::where('name', 'like', "%{$data}%")
+                ->orWhere('slug', 'like', "%{$data}%")
+                ->paginate(10);
+                if($drivers){
+                    return response([
+                        'data' => $drivers
+                    ]);
+                }
+                return response([
+                    'data' => 'None category-caticles'
+                ]);
+              break;
+            default:
+              echo "URL does not exist";
+          }
+        
+        
     }
 
 }

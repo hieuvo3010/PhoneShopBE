@@ -158,6 +158,7 @@ class CheckoutController extends Controller
                                     $order_details->product_color = $value->name;
                                 }
                             }
+                            
                             $order_details->product_image = $product->image;
                             $order_details->product_name = $product->name;
                             $order_details->product_discount = $product->discount;
