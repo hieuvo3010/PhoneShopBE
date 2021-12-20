@@ -15,15 +15,9 @@ class GoogleController extends Controller
 {
     public function getGoogleSignInUrl()
     {
-        try {
-            $url = Socialite::driver('google')->stateless()
-                ->redirect()->getTargetUrl();
-            return response()->json([
-                'url' => $url,
-            ])->setStatusCode(Response::HTTP_OK);
-        } catch (\Exception $exception) {
-            return $exception;
-        }
+        return Response::json([
+            'url' => Socialite::driver('google')->stateless()->redirect()->getTargetUrl(),
+        ]);
     }
 
     public function loginCallback(Request $request)
