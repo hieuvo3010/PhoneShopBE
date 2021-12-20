@@ -51,6 +51,7 @@ class CheckoutController extends Controller
                             $order_details->product_id = $cart['product_id'];
                             $order_details->ship_id = $ship_id;
                             $product = Product::findOrFail($order_details->product_id);
+                            $order_details->product_name =  $product->name;
                             $attributes = $product->attributes;
                             
                             foreach ($attributes as $value){
