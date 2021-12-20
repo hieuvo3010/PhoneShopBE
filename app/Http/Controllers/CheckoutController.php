@@ -71,8 +71,9 @@ class CheckoutController extends Controller
                             $order_details->save();
                             $total += $order_details->product_price*$order_details->product_quantity;
                         }
-                        $order->total = round($total - (($coupon->number*$total)/100));
+                        $order->total = $total - $coupon->number;
                         $order->coupon = $coupon->code;
+                        $order->coupon_number = $coupon->number;
                         $order->save();
                          //send mail confirm
                         $now = Carbon::now('Asia/Ho_Chi_Minh')->format('d-m-Y H:i:s');
