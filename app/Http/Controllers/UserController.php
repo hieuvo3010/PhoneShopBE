@@ -194,7 +194,7 @@ class UserController extends Controller
         $userId = auth()->user()->id;
         $order_code = $request->query('order_code');
         $order= Order::with('order_detail')->where('user_id', $userId)->where('order_code', $order_code)->first();
-        $products_with_order = Order_detail::with('ship','order')->where('order_code', $order->order_code)->get();
+        $products_with_order = Order_detail::with('order')->where('order_code', $order->order_code)->get();
         
         return response()->json([
             'message' => 'Detail order '.$order->order_code ,
