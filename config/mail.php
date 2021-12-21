@@ -56,7 +56,7 @@ return [
     */
 
     'from' => [
-        'address' => env('MAIL_FROM_ADDRESS', 'hieuvokt123@gmail.com'),
+        'address' => env('MAIL_FROM_ADDRESS', 'hieuvoht123@gmail.com'),
         'name' => env('MAIL_FROM_NAME', 'PHONE SHOP'),
     ],
 
@@ -86,7 +86,8 @@ return [
 
     'username' => env('MAIL_USERNAME'),
 
-    'password' => env('MAIL_PASSWORD'),
+    // 'password' => env('MAIL_PASSWORD'),
+    'password' => 'hieu12345',
 
     /*
     |--------------------------------------------------------------------------
