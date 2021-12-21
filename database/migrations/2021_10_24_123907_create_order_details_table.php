@@ -17,7 +17,6 @@ class CreateOrderDetailsTable extends Migration
             $table->increments('id');
             $table->string('order_code');
             $table->integer('order_id')->unsigned();
-            
             $table->integer('product_id')->unsigned();
             $table->string('product_image');
             $table->string('product_name');

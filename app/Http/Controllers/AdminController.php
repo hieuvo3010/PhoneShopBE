@@ -5,9 +5,10 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Admin, App\User, App\Order, 
-App\Order_detail, App\Ship, App\Product, App\Article, 
-App\Category, App\Brand, App\Coupon, App\CateArticle;
+    App\Order_detail, App\Ship, App\Product, App\Article, 
+    App\Category, App\Brand, App\Coupon, App\CateArticle;
 use App\Http\Resources\OrderResource,App\Http\Resources\Product\ProductResource;
+use Illuminate\Pagination\LengthAwarePaginator;
 use App\Http\Resources\UserResource;
 use Validator;
 use Carbon\Carbon;
@@ -155,7 +156,85 @@ class AdminController extends Controller
     }
 
     public function show_all_order(Request $request){
-        $orders = Order::with('user')->orderBy('created_at', 'DESC')->get();
+      
+        $dauthangnay = Carbon::now('Asia/Ho_Chi_Minh')->startOfMonth()->toDateTimeString();
+        $dau_thangtruoc = Carbon::now('Asia/Ho_Chi_Minh')->subMonth()->startOfMonth()->toDateTimeString();
+        $cuoi_thangtruoc = Carbon::now('Asia/Ho_Chi_Minh')->subMonth()->endOfMonth()->toDateTimeString();
+
+        $sub7days = Carbon::now('Asia/Ho_Chi_Minh')->subDays(7)->toDateTimeString();
+        $sub1days = Carbon::now('Asia/Ho_Chi_Minh')->subDay()->toDateTimeString();
+        $sub365days = Carbon::now('Asia/Ho_Chi_Minh')->subDays(365)->toDateTimeString();
+
+        $now = Carbon::now('Asia/Ho_Chi_Minh')->toDateTimeString();
+
+        $s = Order::with('user','ship');
+
+        if(isset($_GET['status'])){ // check brand
+            $status = $_GET['status'];
+            if($status == 'cancel'){
+                $s->where('status',0);
+            }elseif($status == 'processing'){
+                $s->where('status',1);
+            }elseif($status == 'delivering'){
+                $s->where('status',2);
+            }elseif($status == 'complete'){
+                $s->where('status',3);
+            }
+        }
+        if(isset($_GET['filter'])){
+            $filter = $_GET['filter'];
+            if($filter == 'week'){
+                $s->whereBetween('created_at',[$sub7days,$now]);
+            }elseif($filter == 'today'){
+                $s->whereBetween('created_at',[$sub1days,$now]);
+            }elseif($filter == 'last-month'){
+                $s->whereBetween('created_at',[$dau_thangtruoc,$cuoi_thangtruoc]);
+            }elseif($filter == 'month'){
+                $s->whereBetween('created_at',[$dauthangnay,$now]);
+            }elseif($filter == 'year'){
+                $s->whereBetween('created_at',[$sub365days,$now]);
+            }
+        }
+        $orders = $s->orderBy('updated_at','DESC')->get();
+        $currentPage = LengthAwarePaginator::resolveCurrentPage();
+ 
+        // Create a new Laravel collection from the array data
+        $itemCollection = collect($orders);
+ 
+        // Define how many items we want to be visible in each page
+        $perPage = 10;
+ 
+        // Slice the collection to get the items to display in current page
+        $currentPageItems = $itemCollection->slice(($currentPage * $perPage) - $perPage, $perPage)->values();
+ 
+        // Create our paginator and pass it to the view
+        $paginatedItems= new LengthAwarePaginator($currentPageItems , count($itemCollection), $perPage);
+ 
+        // set url path for generted links
+        $paginatedItems->setPath($request->url());
+
+        // if(isset($_GET['filter']) == 'week'){
+        //     $get = Order::whereBetween('created_at',[$sub1days,$now])->orderBy('created_at','DESC')->get();
+        // }elseif(isset($_GET['filter']) =='today'){
+        //     $get = Order::whereBetween('created_at',[$dau_thangtruoc,$cuoi_thangtruoc])->orderBy('created_at','DESC')->get();
+        // }elseif(isset($_GET['filter']) =='last-month'){
+        //     $get = Order::whereBetween('created_at',[$dau_thangtruoc,$cuoi_thangtruoc])->orderBy('created_at','DESC')->get();
+        // }elseif(isset($_GET['filter']) =='month'){
+        //     $get = Order::whereBetween('created_at',[$dauthangnay,$now])->orderBy('created_at','DESC')->get();
+        // }elseif(isset($_GET['filter']) =='year'){
+        //     $get = Order::whereBetween('created_at',[$dauthangnay,$now])->orderBy('created_at','DESC')->get();
+        // }elseif(isset($_GET['filter']) =='cancel'){
+        //     $get = Order::where('status',0)->orderBy('created_at','DESC')->get();
+        // }elseif(isset($_GET['filter']) =='processing'){
+        //     $get = Order::where('status',1)->orderBy('created_at','DESC')->get();
+        // }elseif(isset($_GET['filter']) =='delivering'){
+        //     $get = Order::where('status',2)->orderBy('created_at','DESC')->get();
+        // }
+        // elseif(isset($_GET['filter']) =='complete'){
+        //     $get = Order::where('status',3)->orderBy('created_at','DESC')->get();
+        // }else{
+        //     $get = Order::whereBetween('created_at',[$sub365days,$now])->orderBy('created_at','DESC')->get();
+        // }
         return response()->json([
             'message' => 'All orders',
             'data' => new OrderResource($orders)
@@ -166,7 +245,7 @@ class AdminController extends Controller
         $order_code = $request->query('order_code');
         $order= Order::where('order_code', $order_code)->first();
       
-        $products_with_order = Order_detail::with('order','ship')->where('order_code', $order->order_code)->get();
+        $products_with_order = Order_detail::with('order')->where('order_code', $order->order_code)->get();
         
         return response()->json([
             'message' => 'Detail order '.$order->order_code ,
@@ -224,34 +303,11 @@ class AdminController extends Controller
         $todaySales = Order::where('status',3)->whereDate('created_at',Carbon::today())->count();
         $todayRevenue = Order::where('status',3)->whereDate('created_at',Carbon::today())->sum('total');
 
-        $dauthangnay = Carbon::now('Asia/Ho_Chi_Minh')->startOfMonth()->toDateTimeString();
-        $dau_thangtruoc = Carbon::now('Asia/Ho_Chi_Minh')->subMonth()->startOfMonth()->toDateTimeString();
-        $cuoi_thangtruoc = Carbon::now('Asia/Ho_Chi_Minh')->subMonth()->endOfMonth()->toDateTimeString();
-
         
-
-        $sub7days = Carbon::now('Asia/Ho_Chi_Minh')->subDays(7)->toDateTimeString();
-        $sub1days = Carbon::now('Asia/Ho_Chi_Minh')->subDay()->toDateTimeString();
-        $sub365days = Carbon::now('Asia/Ho_Chi_Minh')->subDays(365)->toDateTimeString();
-
-        $now = Carbon::now('Asia/Ho_Chi_Minh')->toDateTimeString();
-        
-        if($_GET['dashboard_value']=='week'){
-            $get = Order::whereBetween('created_at',[$sub1days,$now])->orderBy('created_at','ASC')->get();
-        }elseif($_GET['dashboard_value']=='today'){
-            $get = Order::whereBetween('created_at',[$dau_thangtruoc,$cuoi_thangtruoc])->orderBy('created_at','ASC')->get();
-        }elseif($_GET['dashboard_value']=='last-month'){
-            $get = Order::whereBetween('created_at',[$dau_thangtruoc,$cuoi_thangtruoc])->orderBy('created_at','ASC')->get();
-        }elseif($_GET['dashboard_value']=='month'){
-            $get = Order::whereBetween('created_at',[$dauthangnay,$now])->orderBy('created_at','ASC')->get();
-        }else{
-            $get = Order::whereBetween('created_at',[$sub365days,$now])->orderBy('created_at','ASC')->get();
-        }
 
         return response([
             'totalProduct' => $totalProduct,
             'totalProductSold' => $totalProductSold,
-            'orders' => new OrderResource($get),
             'totalSales' => $totalSales,
             'totalRevenue' => $totalRevenue,
             'todaySales' => $todaySales,
