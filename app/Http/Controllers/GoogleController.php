@@ -28,7 +28,7 @@ class GoogleController extends Controller
 
     public function loginCallback(Request $request)
     {
-        // try {
+        try {
             $state = $request->input('state');
 
             parse_str($state, $result);
@@ -65,13 +65,13 @@ class GoogleController extends Controller
                 'token' => $token
             ], Response::HTTP_CREATED);
 
-        // } catch (\Exception $exception) {
-        //     return response()->json([
-        //         'status' => __('google sign in failed'),
-        //         'error' => $exception,
-        //         'message' => $exception->getMessage()
-        //     ], Response::HTTP_BAD_REQUEST);
-        // }
+        } catch (\Exception $exception) {
+            return response()->json([
+                'status' => __('google sign in failed'),
+                'error' => $exception,
+                'message' => $exception->getMessage()
+            ], Response::HTTP_BAD_REQUEST);
+        }
     }
 
     private function issueToken(User $user) {
