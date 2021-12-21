@@ -143,7 +143,7 @@ class CheckoutController extends Controller
                         $order_code = substr(md5(microtime()),rand(0,26),5);
                         $order = new Order(); // insert order
                         $order->user_id = auth()->user()->id;
-                        $order_details->ship_id = $ship->id;
+                        $order->ship_id = $ship->id;
                         $order->status = 1;
                         $order->order_code = $order_code;
                         $order->save();
