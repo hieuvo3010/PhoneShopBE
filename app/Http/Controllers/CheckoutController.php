@@ -40,6 +40,7 @@ class CheckoutController extends Controller
                         $ship_id = $ship->id; //$shipping_id = DB::table('ships')->insertGetId($data);
                         $order = new Order(); // insert order
                         $order->user_id = auth()->user()->id;
+                        $order->ship_id = $ship_id;
                         $order->status = 1;
                         $order->order_code = $order_code;
                         $order->save();
@@ -49,7 +50,6 @@ class CheckoutController extends Controller
                             $order_details->order_code = $order->order_code;
                             $order_details->order_id = $order->id;
                             $order_details->product_id = $cart['product_id'];
-                            $order_details->ship_id = $ship_id;
                             $product = Product::findOrFail($order_details->product_id);
                             $order_details->product_name =  $product->name;
                             $attributes = $product->attributes;
@@ -143,6 +143,7 @@ class CheckoutController extends Controller
                         $order_code = substr(md5(microtime()),rand(0,26),5);
                         $order = new Order(); // insert order
                         $order->user_id = auth()->user()->id;
+                        $order_details->ship_id = $ship->id;
                         $order->status = 1;
                         $order->order_code = $order_code;
                         $order->save();
@@ -152,7 +153,6 @@ class CheckoutController extends Controller
                             $order_details->order_code = $order->order_code;
                             $order_details->order_id = $order->id;
                             $order_details->product_id = $cart['product_id'];
-                            $order_details->ship_id = $ship->id;
                             $product = Product::findOrFail($order_details->product_id);
                             $attributes = $product->attributes;
                             foreach ($attributes as $value){
