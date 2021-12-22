@@ -147,6 +147,16 @@ class AdminController extends Controller
         ], 201);
     }
 
+    public function update_user(Request $request){
+        $email = $request->query('email');
+        $user = User::where('email', $email)->first();
+        $user->update([
+            'status' => $request->status
+        ]);
+        return response()->json([
+            'user' => $user,
+        ], 201);
+    }
    
     public function show_all_order(Request $request){
       

@@ -119,6 +119,7 @@ Route::group([
         Route::post('/update-order', 'AdminController@update_order')->name('update-order');
         Route::get('/order-user-detail', 'AdminController@show_detail_order');
         Route::get('/order-user', 'AdminController@show_all_order');
+        Route::put('/update-user', 'AdminController@update_user');
 
         Route::get('/dashboard', 'AdminController@dashboard');
 
