@@ -12,7 +12,7 @@ class HomeController extends Controller
     //
     public function show_product(Request $request){ 
         $this->pagesize = 10;
-        $s = Product::with('brand');
+        $s = Product::with('brand')->where('status', 1);
      
         if(isset($_GET['min_price']) && isset($_GET['max_price']) && isset($_GET['brand_id'])) { // checkbox price && brand
             $min_price = $_GET['min_price'];
@@ -90,8 +90,12 @@ class HomeController extends Controller
     
         $data = $request->query('data');
 
-        $drivers = Product::with('brand','product_info','attributes','ratings')->where('status', 1)->where('name', 'like', "%{$data}%")
-                        ->orWhere('slug', 'like', "%{$data}%")
+        $drivers = Product::with('brand','product_info','attributes','ratings')
+                        ->where('status', 1)
+                        ->where(function($query) use ($data){
+                            $query->where('name','like',"%{$data}%")
+                           ->orWhere('slug','like',"%{$data}%");
+                       })
                         ->paginate(10);
         if($drivers){
             return response([
@@ -106,7 +110,7 @@ class HomeController extends Controller
     public function get_articles_by_cate(Request $request){
         try{
             $data = $request->query('slug');
-            $cateArticle = CateArticle::where('slug',$data)->first();
+            $cateArticle = CateArticle::where('slug',$data)->where('status', 1)->first();
             $articles = Article::where('cate_article_id',$cateArticle->id)->get();
             return response([
                 'data' => HomeResource::collection($articles),
