@@ -195,7 +195,7 @@ class AdminController extends Controller
                 $s->whereBetween('created_at',[$sub365days,$now]);
             }
         }
-        $orders = $s->orderBy('updated_at','DESC')->get();
+        $orders = $s->orderBy('id','DESC')->get();
         $currentPage = LengthAwarePaginator::resolveCurrentPage();
  
         // Create a new Laravel collection from the array data
