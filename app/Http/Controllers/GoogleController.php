@@ -45,6 +45,7 @@ class GoogleController extends Controller
                 $user->google_id = $googleUser->id;
                 $user->email_verified_at = now()->timestamp;
                 $user->password = bcrypt('123456');
+                $user->status = 1;
                 $user->save();
                 // $user = User::create(
                 //     [

@@ -334,7 +334,7 @@ class AdminController extends Controller
             ], 200);
         }else{
             return response([
-                'sales' => [],
+                'sales' => [0,0,0,0,0,0,0,0,0,0,0,0],
                 'totalProduct' => $totalProduct,
                 'totalProductSold' => $totalProductSold,
                 'totalSales' => $totalSales,
@@ -468,7 +468,7 @@ class AdminController extends Controller
                 return ProductResource::collection($coupons);
                 break;
             case "products":
-                $products = Product::orderBy('id','DESC')->get();
+                $products = Product::with('brand','product_info','attributes','category')->orderBy('id','DESC')->get();
                 return ProductResource::collection($products);
                 break;
             case "users":
