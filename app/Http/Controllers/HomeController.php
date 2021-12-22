@@ -12,7 +12,7 @@ class HomeController extends Controller
     //
     public function show_product(Request $request){ 
         $this->pagesize = 10;
-        $s = Product::with('brand')->where('status', 1);
+        $s = Product::with('brand');
      
         if(isset($_GET['min_price']) && isset($_GET['max_price']) && isset($_GET['brand_id'])) { // checkbox price && brand
             $min_price = $_GET['min_price'];
@@ -20,18 +20,19 @@ class HomeController extends Controller
                 foreach($_GET['brand_id'] as $value) {
                     $s->orWhere('price','>=',$min_price)
                     ->where('price','<=',$max_price)
-                    ->where('brand_id', $value);
+                    ->where('brand_id', $value)->where('status',1);
+
                 }
         }else{
             if(isset($_GET['min_price']) && isset($_GET['max_price'])) { // check price
                 $min_price = $_GET['min_price'];
                 $max_price = $_GET['max_price'];
-                $s->whereBetween('price',[$min_price,$max_price]);
+                $s->where('status',1)->whereBetween('price',[$min_price,$max_price]);
             }
             
             if(isset($_GET['brand_id'])){ // check brand
                     foreach($_GET['brand_id'] as $value) {
-                        $s->orWhereIn('brand_id', [$value]);
+                        $s->orWhereIn('brand_id', [$value])->where('status',1);
                     }
             }
         }
