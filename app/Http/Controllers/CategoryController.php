@@ -20,7 +20,7 @@ class CategoryController extends Controller
     public function index()
     {
         //
-        $categories = Category::orderBy('id','DESC')->paginate(10);
+        $categories = Category::orderBy('id','DESC')->where('status', 1)->paginate(10);
         return CategoryResource::collection($categories);
     }
 

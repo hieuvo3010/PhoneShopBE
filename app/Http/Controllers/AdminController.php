@@ -11,7 +11,7 @@ use App\Http\Resources\OrderResource,App\Http\Resources\Product\ProductResource;
 use Illuminate\Pagination\LengthAwarePaginator;
 use App\Http\Resources\UserResource;
 use Validator;
-use Carbon\Carbon;
+use Carbon\Carbon, DB;
 class AdminController extends Controller
 {
     //
@@ -147,14 +147,7 @@ class AdminController extends Controller
         ], 201);
     }
 
-    public function show_account_user(Request $request){
-        $account = User::all();
-        return response()->json([
-            'message' => 'All account users',
-            'data' => new UserResource($account)
-        ], 201);
-    }
-
+   
     public function show_all_order(Request $request){
       
         $dauthangnay = Carbon::now('Asia/Ho_Chi_Minh')->startOfMonth()->toDateTimeString();
@@ -260,7 +253,7 @@ class AdminController extends Controller
             'status' => 'required'
         ]);
         $order->update($data);
-        if($order->status == 2){
+        if($order->status == 3){
             $order_d = Order_detail::where('order_code', $order_code)->get();
             foreach($order_d as $value) {
                 $product = Product::find($value->product_id);
@@ -270,6 +263,7 @@ class AdminController extends Controller
                 ];
                 $product->update($updateDetails);
             }
+            
         }
         return response([
             'message' => 'Update status order successfully',
@@ -298,134 +292,190 @@ class AdminController extends Controller
             $totalProductSold += $product->sold;
         }
         $orders = Order::orderBy('created_at','DESC')->paginate(10);
-        $totalSales = Order::where('status',3)->count();
-        $totalRevenue = Order::where('status',3)->sum('total');
+        $totalSales = Order::where('status',3 )->count();
+        $totalRevenue = Order::where('status',3 )->sum('total');
         $todaySales = Order::where('status',3)->whereDate('created_at',Carbon::today())->count();
         $todayRevenue = Order::where('status',3)->whereDate('created_at',Carbon::today())->sum('total');
 
+        $c = Order::where('status',3)->first();
+        if($c){
+            $orders_by_month = Order::select(DB::raw("COUNT(*) as count"))
+                            ->whereYear('updated_at', date('Y'))
+                            ->where('status', 3)
+                            ->groupBy(DB::raw("Month(updated_at)"))
+                            ->pluck('count');
+            $months =  Order::select(DB::raw("Month(updated_at) as month"))
+                            ->whereYear('updated_at', date('Y'))
+                            ->groupBy(DB::raw("Month(updated_at)"))
+                            ->pluck('month');
+            $data = [0,0,0,0,0,0,0,0,0,0,0,0];
+            foreach ($months as $index => $month){
+                --$month;
+                $data[$month] = $orders_by_month[$index];
+            }        
+            return response([
+                'sales' => $data,
+                'totalProduct' => $totalProduct,
+                'totalProductSold' => $totalProductSold,
+                'totalSales' => $totalSales,
+                'totalRevenue' => $totalRevenue,
+                'todaySales' => $todaySales,
+                'todayRevenue' => $todayRevenue,
+            ], 200);
+        }else{
+            return response([
+                'sales' => [],
+                'totalProduct' => $totalProduct,
+                'totalProductSold' => $totalProductSold,
+                'totalSales' => $totalSales,
+                'totalRevenue' => $totalRevenue,
+                'todaySales' => $todaySales,
+                'todayRevenue' => $todayRevenue,
+            ], 200);
+        }
         
-
-        return response([
-            'totalProduct' => $totalProduct,
-            'totalProductSold' => $totalProductSold,
-            'totalSales' => $totalSales,
-            'totalRevenue' => $totalRevenue,
-            'todaySales' => $todaySales,
-            'todayRevenue' => $todayRevenue,
-        ], 200);
     }
 
-    public function search(Request $request, $type){
-        $data = $request->query('data');
+    // public function search(Request $request, $type){
+    //     $data = $request->query('data');
+    //     switch ($type) {
+    //         case "categories":
+    //             $drivers = Category::where('name', 'like', "%{$data}%")
+    //             ->orWhere('slug', 'like', "%{$data}%")
+    //             ->paginate(10);
+    //             if($drivers){
+    //                 return response([
+    //                     'data' => $drivers
+    //                 ]);
+    //             }
+    //             return response([
+    //                 'data' => 'None category'
+    //             ]);
+    //           break;
+    //         case "brands":
+    //             $drivers = Brand::where('name', 'like', "%{$data}%")
+    //             ->orWhere('slug', 'like', "%{$data}%")
+    //             ->paginate(10);
+    //             if($drivers){
+    //                 return response([
+    //                     'data' => $drivers
+    //                 ]);
+    //             }
+    //             return response([
+    //                 'data' => 'None brands'
+    //             ]);
+    //           break;
+    //         case "coupons":
+    //             $drivers = Coupon::where('name', 'like', "%{$data}%")
+    //             ->orWhere('code', 'like', "%{$data}%")
+    //             ->paginate(10);
+    //             if($drivers){
+    //                 return response([
+    //                     'data' => $drivers
+    //                 ]);
+    //             }
+    //             return response([
+    //                 'data' => 'None coupons'
+    //             ]);
+    //           break;
+    //         case "products":
+    //             $drivers = Product::where('name', 'like', "%{$data}%")
+    //             ->orWhere('slug', 'like', "%{$data}%")
+    //             ->paginate(10);
+    //             if($drivers){
+    //                 return response([
+    //                     'data' => $drivers
+    //                 ]);
+    //             }
+    //             return response([
+    //                 'data' => 'None coupons'
+    //             ]);
+    //           break;
+    //         case "orders":
+    //             $drivers = Order::where('order_code', 'like', "%{$data}%")
+    //             ->paginate(10);
+    //             if($drivers){
+    //                 return response([
+    //                     'data' => $drivers
+    //                 ]);
+    //             }
+    //             return response([
+    //                 'data' => 'None orders'
+    //             ]);
+    //           break;
+    //         case "users":
+    //             $drivers = User::where('name', 'like', "%{$data}%")
+    //             ->orWhere('email', 'like', "%{$data}%")
+    //             ->paginate(10);
+    //             if($drivers){
+    //                 return response([
+    //                     'data' => $drivers
+    //                 ]);
+    //             }
+    //             return response([
+    //                 'data' => 'None users'
+    //             ]);
+    //          break;
+    //         case "category-aticles":
+    //             $drivers = CateArticle::where('name', 'like', "%{$data}%")
+    //             ->orWhere('slug', 'like', "%{$data}%")
+    //             ->paginate(10);
+    //             if($drivers){
+    //                 return response([
+    //                     'data' => $drivers
+    //                 ]);
+    //             }
+    //             return response([
+    //                 'data' => 'None category-caticles'
+    //             ]);
+    //           break;  
+    //         case "articles":
+    //             $drivers = CateArticle::where('name', 'like', "%{$data}%")
+    //             ->orWhere('slug', 'like', "%{$data}%")
+    //             ->paginate(10);
+    //             if($drivers){
+    //                 return response([
+    //                     'data' => $drivers
+    //                 ]);
+    //             }
+    //             return response([
+    //                 'data' => 'None category-caticles'
+    //             ]);
+    //           break;
+    //         default:
+    //           echo "URL does not exist";
+    //     }
+    // }
+
+    public function show(Request $request, $type){
         switch ($type) {
-            case "categories":
-                $drivers = Category::where('name', 'like', "%{$data}%")
-                ->orWhere('slug', 'like', "%{$data}%")
-                ->paginate(10);
-                if($drivers){
-                    return response([
-                        'data' => $drivers
-                    ]);
-                }
-                return response([
-                    'data' => 'None category'
-                ]);
-              break;
             case "brands":
-                $drivers = Brand::where('name', 'like', "%{$data}%")
-                ->orWhere('slug', 'like', "%{$data}%")
-                ->paginate(10);
-                if($drivers){
-                    return response([
-                        'data' => $drivers
-                    ]);
-                }
-                return response([
-                    'data' => 'None brands'
-                ]);
-              break;
+                $bands = Brand::orderBy('id','DESC')->get();
+                return ProductResource::collection($bands);
+                break;
             case "coupons":
-                $drivers = Coupon::where('name', 'like', "%{$data}%")
-                ->orWhere('code', 'like', "%{$data}%")
-                ->paginate(10);
-                if($drivers){
-                    return response([
-                        'data' => $drivers
-                    ]);
-                }
-                return response([
-                    'data' => 'None coupons'
-                ]);
-              break;
+                $coupons = Coupon::orderBy('id','DESC')->get();
+                return ProductResource::collection($coupons);
+                break;
             case "products":
-                $drivers = Product::where('name', 'like', "%{$data}%")
-                ->orWhere('slug', 'like', "%{$data}%")
-                ->paginate(10);
-                if($drivers){
-                    return response([
-                        'data' => $drivers
-                    ]);
-                }
-                return response([
-                    'data' => 'None coupons'
-                ]);
-              break;
-            case "orders":
-                $drivers = Order::where('order_code', 'like', "%{$data}%")
-                ->paginate(10);
-                if($drivers){
-                    return response([
-                        'data' => $drivers
-                    ]);
-                }
-                return response([
-                    'data' => 'None orders'
-                ]);
-              break;
+                $products = Product::orderBy('id','DESC')->get();
+                return ProductResource::collection($products);
+                break;
             case "users":
-                $drivers = User::where('name', 'like', "%{$data}%")
-                ->orWhere('email', 'like', "%{$data}%")
-                ->paginate(10);
-                if($drivers){
-                    return response([
-                        'data' => $drivers
-                    ]);
-                }
-                return response([
-                    'data' => 'None users'
-                ]);
-             break;
+                $users = User::orderBy('id','DESC')->get();
+                return ProductResource::collection($users);
+                break;
             case "category-aticles":
-                $drivers = CateArticle::where('name', 'like', "%{$data}%")
-                ->orWhere('slug', 'like', "%{$data}%")
-                ->paginate(10);
-                if($drivers){
-                    return response([
-                        'data' => $drivers
-                    ]);
-                }
-                return response([
-                    'data' => 'None category-caticles'
-                ]);
-              break;  
+                $CateArticle = CateArticle::orderBy('id','DESC')->get();
+                return ProductResource::collection($CateArticle);
+                break;
             case "articles":
-                $drivers = CateArticle::where('name', 'like', "%{$data}%")
-                ->orWhere('slug', 'like', "%{$data}%")
-                ->paginate(10);
-                if($drivers){
-                    return response([
-                        'data' => $drivers
-                    ]);
-                }
-                return response([
-                    'data' => 'None category-caticles'
-                ]);
-              break;
+                $articles = Article::orderBy('id','DESC')->get();
+                return ProductResource::collection($articles);
+                break;
             default:
               echo "URL does not exist";
-          }
-        
-        
+        }
     }
 
 }

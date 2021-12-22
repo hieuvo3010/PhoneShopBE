@@ -108,6 +108,9 @@ Route::group([
 
     Route::group(['prefix' => 'admin','middleware' => ['assign.guard:admins']],function ()
     {
+        // show 
+        Route::get('/{type}/all', 'AdminController@show');
+
         // search brand, category and
         Route::get('/{type}/search', 'AdminController@search');
 
@@ -119,8 +122,6 @@ Route::group([
 
         Route::get('/dashboard', 'AdminController@dashboard');
 
-        // manager user
-        Route::get('/show_account_user', 'AdminController@show_account_user');
 
         // account
         Route::post('/login', 'AdminController@login');

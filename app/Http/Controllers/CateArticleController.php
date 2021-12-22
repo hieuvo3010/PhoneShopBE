@@ -20,7 +20,7 @@ class CateArticleController extends Controller
     public function index()
     {
         //
-        $CategoryArticles = CateArticle::orderBy('id','DESC')->get();
+        $CategoryArticles = CateArticle::orderBy('id','DESC')->where('status', 1)->get();
         return CateArticleResource::collection($CategoryArticles);
     }
 

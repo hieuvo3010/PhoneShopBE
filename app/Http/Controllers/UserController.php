@@ -37,11 +37,16 @@ class UserController extends Controller
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
+        
 
         if (! $token = auth()->attempt($validator->validated())) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
-         
+        
+        if(!auth()->user()->status == 1){
+            return response()->json(['error' => 'Your account has been locked. Please contact admin for more details'], 401);
+        }
+
         if (! auth()->user()->hasVerifiedEmail()) {
             return response()->json(['error' => 'Please verify your email address before logging in. You may request a new link here xyz.com if your verification has expired.'], 401);
         }

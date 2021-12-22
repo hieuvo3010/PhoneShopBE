@@ -20,7 +20,7 @@ class CouponController extends Controller
     public function index()
     {
         //
-        $coupons = Coupon::orderBy('id','DESC')->get();
+        $coupons = Coupon::orderBy('id','DESC')->where('status', 1)->get();
         return CouponResource::collection($coupons);
     }
 

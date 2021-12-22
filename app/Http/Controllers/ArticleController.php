@@ -21,7 +21,7 @@ class ArticleController extends Controller
     public function index()
     {
         //
-        $Articles = Article::with('cate_article')->orderBy('id','DESC')->get();
+        $Articles = Article::with('cate_article')->orderBy('id','DESC')->where('status', 1)->get();
         return ArticleResource::collection($Articles);
     }
 

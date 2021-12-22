@@ -22,7 +22,7 @@ class ProductController extends Controller
     {
         //
         //$products = Product::orderBy('id','DESC')->paginate(5);
-        $products = Product::with('brand','product_info','attributes','category')->orderBy('id','DESC')->get();
+        $products = Product::with('brand','product_info','attributes','category')->where('status', 1)->orderBy('id','DESC')->get();
         return ProductResource::collection($products);
     }
 
@@ -167,10 +167,10 @@ class ProductController extends Controller
     public function related_products(Request $request){
         $difference = 1000000;
         $slug = $request->query('slug');
-        $product_details = Product::where('slug', $slug)->first();
+        $product_details = Product::where('slug', $slug)->where('status', 1)->first();
         
         if(!empty($product_details)){
-            $related_products = Product::with('product_info')
+            $related_products = Product::with('product_info')->where('status', 1)
             ->whereBetween('price',[$product_details->price,$product_details->price + $difference])
             ->whereNotIn('id', [$product_details->id])->paginate(5);
             return response([
@@ -187,8 +187,8 @@ class ProductController extends Controller
     public function type_product(Request $request){
         try{
             $slug = $request->query('slug');
-            $product_details = Product::where('slug', $slug)->first();
-            $product = Product::where('type',$product_details->type)->get();
+            $product_details = Product::where('slug', $slug)->where('status', 1)->first();
+            $product = Product::where('type',$product_details->type)->where('status', 1)->get();
             return response([
                 'message' => 'Successfully',
                 'data' => new ProductResource($product),

@@ -21,7 +21,7 @@ class BrandController extends Controller
     public function index()
     {
         //
-        $bands = Brand::orderBy('id','DESC')->get();
+        $bands = Brand::orderBy('id','DESC')->where('status', 1)->get();
         return BrandResource::collection($bands);
     }
 
