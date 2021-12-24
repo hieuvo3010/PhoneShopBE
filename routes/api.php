@@ -81,6 +81,7 @@ Route::group([
     Route::get('products/filter', 'HomeController@show_product');
     Route::get('colors-product', 'HomeController@show_color_products');
     Route::get('cate/articles', 'HomeController@get_articles_by_cate');
+    Route::get('tra-cuu-don-hang', 'HomeController@check_order');
 
     Route::group(['prefix' => 'user','middleware' => ['assign.guard:users']],function ()
     {

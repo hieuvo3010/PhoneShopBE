@@ -35,7 +35,7 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         //
-        try {
+        // try {
             $product_info = new Product_info();
             $product_info->fill($request->all());
             $product_info->save();
@@ -70,11 +70,11 @@ class ProductController extends Controller
                 'data' => (new ProductResource($product))
             ], Response::HTTP_CREATED);
 
-        } catch (\Exception $exception) {
-            return response()->json([
-                'status' => __('Create product failed'),
-            ], Response::HTTP_BAD_REQUEST);
-        }
+        // } catch (\Exception $exception) {
+        //     return response()->json([
+        //         'status' => __('Create product failed'),
+        //     ], Response::HTTP_BAD_REQUEST);
+        // }
     }
 
     /**

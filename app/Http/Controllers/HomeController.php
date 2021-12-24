@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Resources\HomeResource;
-use App\Product, App\Attribute, App\Brand, App\Article, App\CateArticle;
-use WithPagination;
+use App\Product, App\Attribute, App\Brand, App\Article, App\CateArticle, App\Order;
+use WithPagination, DB;
 use Illuminate\Pagination\LengthAwarePaginator;
 class HomeController extends Controller
 {
@@ -121,5 +121,21 @@ class HomeController extends Controller
                 'status' => __('Category Article slug does not exist'),
             ], 400);
         }
+    }
+
+    public function check_order(Request $request){
+        $data1 = $request->query('phone');
+        $data2 = $request->query('order_code');
+        // $o = Order::with('ship')->where('ship.phone',$data1)->where('order_code',$data2)->first();
+
+        $query = DB::table('orders')
+                ->join('ships', 'orders.ship_id', '=', 'ships.id')
+                ->where('orders.order_code',  $data2)
+                ->where('ships.phone', $data1)
+                ->select('orders.*', 'ships.*')
+                ->get();
+        return response()->json([
+            'data' => $query
+        ], 200);
     }
 }
