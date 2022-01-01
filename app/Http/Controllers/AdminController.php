@@ -182,6 +182,8 @@ class AdminController extends Controller
                 $s->where('status',2);
             }elseif($status == 'complete'){
                 $s->where('status',3);
+            }elseif($status == 'failure'){
+                $s->where('status',4);
             }
         }
         if(isset($_GET['filter'])){

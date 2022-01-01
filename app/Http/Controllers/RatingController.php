@@ -76,6 +76,8 @@ class RatingController extends Controller
         $five_star = Rating::where('product_id', $id)->where('star', 5)->count();
         return response()->json([
                 'data' => RatingResource::collection($ratings),
+                'totalStars' => collect($ratingValues)->sum(),
+                'totalRatings' => $ratings->count(),
                 'star_avg' => $ratingAverage,
                 'one_star' => $one_star,
                 'two_star' => $two_star,

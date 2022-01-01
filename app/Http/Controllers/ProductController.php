@@ -107,6 +107,8 @@ class ProductController extends Controller
                 $five_star = Rating::where('product_id', $product->id)->where('star', 5)->count();
                 return response()->json([
                     'data' => new ProductResource($product),
+                    'totalStars' => collect($ratingValues)->sum(),
+                    'totalRatings' => $ratings->count(),
                     'star_avg' => $ratingAverage,
                     'one_star' => $one_star,
                     'two_star' => $two_star,
