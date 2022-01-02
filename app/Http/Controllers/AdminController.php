@@ -337,8 +337,6 @@ class AdminController extends Controller
         }else{
             return response([
                 'sales' => [0,0,0,0,0,0,0,0,0,0,0,0],
-                'totalProduct' => $totalProduct,
-                'totalProductSold' => $totalProductSold,
                 'totalSales' => $totalSales,
                 'totalRevenue' => $totalRevenue,
                 'todaySales' => $todaySales,
