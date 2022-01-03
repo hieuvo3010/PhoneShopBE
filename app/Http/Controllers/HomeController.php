@@ -12,13 +12,32 @@ class HomeController extends Controller
     //
     public function show_product(Request $request){ 
         $this->pagesize = 10;
-        if(empty($request)){
-            $s = Product::with('brand')->where('status',1)->get();
-            return response([
-                'message' => 'Success filter products',
-                'data' => $s
-            
-            ], 200);
+        if($request->query() == null ){
+            $s = Product::with('brand')->where('status',1);
+            $products = $s->get();
+    
+        $currentPage = LengthAwarePaginator::resolveCurrentPage();
+ 
+        // Create a new Laravel collection from the array data
+        $itemCollection = collect($products);
+ 
+        // Define how many items we want to be visible in each page
+        $perPage = 10;
+ 
+        // Slice the collection to get the items to display in current page
+        $currentPageItems = $itemCollection->slice(($currentPage * $perPage) - $perPage, $perPage)->values();
+ 
+        // Create our paginator and pass it to the view
+        $paginatedItems= new LengthAwarePaginator($currentPageItems , count($itemCollection), $perPage);
+ 
+        // set url path for generted links
+        $paginatedItems->setPath($request->url());
+
+        return response([
+            'message' => 'Success filter products',
+            'data' => $paginatedItems
+         
+        ], 200);
         }
         $s = Product::with('brand');
      
