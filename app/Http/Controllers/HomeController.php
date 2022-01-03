@@ -12,6 +12,14 @@ class HomeController extends Controller
     //
     public function show_product(Request $request){ 
         $this->pagesize = 10;
+        if(empty($request)){
+            $s = Product::with('brand')->where('status',1)->get();
+            return response([
+                'message' => 'Success filter products',
+                'data' => $s
+            
+            ], 200);
+        }
         $s = Product::with('brand');
      
         if(isset($_GET['min_price']) && isset($_GET['max_price']) && isset($_GET['brand_id'])) { // checkbox price && brand
