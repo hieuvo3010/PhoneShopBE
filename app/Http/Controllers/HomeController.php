@@ -39,6 +39,34 @@ class HomeController extends Controller
          
         ], 200);
         }
+        if($request->query('brand_id') == null && !empty($request->query('page') && $request->query('sort_by') == null
+        && $request->query('min_price') == null && $request->query('max_price') == null )){
+            $s = Product::with('brand')->where('status',1);
+            $products = $s->get();
+    
+            $currentPage = LengthAwarePaginator::resolveCurrentPage();
+    
+            // Create a new Laravel collection from the array data
+            $itemCollection = collect($products);
+    
+            // Define how many items we want to be visible in each page
+            $perPage = 10;
+    
+            // Slice the collection to get the items to display in current page
+            $currentPageItems = $itemCollection->slice(($currentPage * $perPage) - $perPage, $perPage)->values();
+    
+            // Create our paginator and pass it to the view
+            $paginatedItems= new LengthAwarePaginator($currentPageItems , count($itemCollection), $perPage);
+    
+            // set url path for generted links
+            $paginatedItems->setPath($request->url());
+
+            return response([
+                'message' => 'Success filter products',
+                'data' => $paginatedItems
+            
+            ], 200);
+        }
         $s = Product::with('brand');
      
         if(isset($_GET['min_price']) && isset($_GET['max_price']) && isset($_GET['brand_id'])) { // checkbox price && brand
@@ -73,6 +101,10 @@ class HomeController extends Controller
                 $s->orderBy('price','DESC');
             }elseif($sort_by == 'asc'){
                 $s->orderBy('price','ASC');
+            }elseif($sort_by == 'new'){
+                $s->orderBy('id','desc');
+            }elseif($sort_by == 'old'){
+                $s->orderBy('id','ASC');
             }
         }
         $products = $s->get();
