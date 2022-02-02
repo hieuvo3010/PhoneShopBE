@@ -20,6 +20,12 @@
 <img src="https://firebasestorage.googleapis.com/v0/b/cnpm-e5af3.appspot.com/o/Product%2FBanAnThongMinh%2Fcat2.jpg?alt=media&token=06f95cff-63f0-42d7-bddd-1d62cff54c61" alt="Girl in a jacket">
 <img src="https://firebasestorage.googleapis.com/v0/b/cnpm-e5af3.appspot.com/o/Product%2FBanAnThongMinh%2Fcart3.jpg?alt=media&token=45ab1699-14a0-484d-9108-213e043d0c25" alt="Girl in a jacket">
 
+# Đơn hàng
+<img src="https://firebasestorage.googleapis.com/v0/b/cnpm-e5af3.appspot.com/o/Product%2FBanAnGo%2Fdon%20hang.jpg?alt=media&token=b97f95ea-8762-4ae3-ab10-6b5e18f82ec0" alt="Girl in a jacket">
+
+# Tra cứu đơn hàng
+<img src="https://firebasestorage.googleapis.com/v0/b/cnpm-e5af3.appspot.com/o/Product%2FBanAnGo%2Ftra%20cu.jpg?alt=media&token=4f432547-4d2c-40f3-a948-6aa9d6faabda" alt="Girl in a jacket">
+
 # Tin tức
 <img src="https://firebasestorage.googleapis.com/v0/b/cnpm-e5af3.appspot.com/o/Product%2FBanAnThongMinh%2Fbantin.jpg?alt=media&token=2826fe13-47d8-41de-b563-1af3ae2755f3" alt="Girl in a jacket">
 
